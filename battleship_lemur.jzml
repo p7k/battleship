@@ -1,208 +1,44 @@
 <JZML>
 <PROJECT version="4110" width="1024" height="724" osc_target="-1" midi_target="-1" kbmouse_target="-1" skin="Pixel"/>
-<WINDOW class="JAZZINTERFACE" text="Default" x="0" y="0" width="1024" height="724" state="1" group="0" font="tahoma,11,0" >
-<WINDOW class="Container" text="Midi_view" x="0" y="422" width="1024" height="302" id="1" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="1" tabbar="1" meta="0">
-<WINDOW class="Container" text="Midi_Viewer" x="0" y="0" width="190" height="286" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="1" tabbar="1" meta="0">
-<WINDOW class="Monitor" text="_1" x="0" y="22" width="200" height="29" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350067" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_1/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_2" x="0" y="51" width="200" height="29" id="1" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350075" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_2/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_3" x="0" y="80" width="200" height="29" id="2" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350075" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_3/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_4" x="0" y="109" width="199" height="29" id="3" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350075" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_4/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_5" x="0" y="138" width="200" height="29" id="4" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350075" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_5/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_6" x="0" y="167" width="200" height="29" id="5" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_6/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_7" x="0" y="196" width="200" height="29" id="6" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_7/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_8" x="0" y="225" width="200" height="29" id="7" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/_8/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_note" x="0" y="0" width="68" height="22" id="8" state="213" group="0" font="tahoma,14,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="Note on">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer/Text_note/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<SCRIPT name="mid_in(MIDI_ARGS)" script="_8.value=_7.value;
-_7.value=_6.value;
-_6.value=_5.value;
-_5.value=_4.value;
-_4.value=_3.value;
-_3.value=_2.value;
-_2.value=_1.value;
+<WINDOW class="JAZZINTERFACE" text="Aurora" x="0" y="0" width="1024" height="724" state="1" group="0" font="tahoma,11,0" >
+<WINDOW class="Switches" text="us" x="30" y="50" width="400" height="400" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
+<PARAM name="x=" value="0.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,0.000000,0.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/us/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/us/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<SCRIPT name="state(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
-
-
-_1.value=MIDI_ARGS;" trigger_script="" trigger_type="3" trigger="1" osc_message="/Midi_view/Midi_Viewer/mid_in" midi_message="0x90,0x9F,0,127" midi_target="0" flag="1"/>
-</WINDOW>
-<WINDOW class="Container" text="Midi_Viewer2" x="190" y="0" width="173" height="286" id="1" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="1" tabbar="1" meta="0">
-<WINDOW class="Monitor" text="_1" x="0" y="22" width="200" height="29" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350075" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_1/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_2" x="0" y="51" width="200" height="29" id="1" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_2/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_3" x="0" y="80" width="200" height="29" id="2" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_3/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_4" x="0" y="109" width="199" height="29" id="3" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_4/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_5" x="0" y="138" width="200" height="29" id="4" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_5/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_6" x="0" y="167" width="200" height="29" id="5" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_6/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_7" x="0" y="196" width="200" height="29" id="6" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_7/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_8" x="0" y="225" width="200" height="29" id="7" state="85" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/_8/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_cc" x="0" y="0" width="68" height="22" id="8" state="213" group="0" font="tahoma,14,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="cc">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer2/Text_cc/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<SCRIPT name="mid_in(MIDI_ARGS)" script="_8.value=_7.value;
-_7.value=_6.value;
-_6.value=_5.value;
-_5.value=_4.value;
-_4.value=_3.value;
-_3.value=_2.value;
-_2.value=_1.value;
-
-
-
-_1.value=MIDI_ARGS;" trigger_script="" trigger_type="3" trigger="1" osc_message="/Midi_view/Midi_Viewer2/mid_in" midi_message="0xB0,0xBF,0,127" midi_target="0" flag="1"/>
-</WINDOW>
-<WINDOW class="Container" text="Midi_Viewer3" x="363" y="0" width="652" height="286" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="1" tabbar="1" meta="0">
-<WINDOW class="Monitor" text="_1" x="29" y="22" width="600" height="29" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_1/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_2" x="29" y="51" width="600" height="29" id="1" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_2/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_3" x="29" y="80" width="600" height="29" id="2" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_3/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_4" x="29" y="109" width="600" height="29" id="3" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_4/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_5" x="29" y="138" width="600" height="29" id="4" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_5/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_6" x="29" y="167" width="600" height="29" id="5" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_6/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_7" x="29" y="196" width="600" height="29" id="6" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_7/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Monitor" text="_8" x="29" y="225" width="600" height="29" id="7" state="85" group="1" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" label="0" precision="0" unit="" value="1">
-<VARIABLE name="value=" value="120.350082" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/_8/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_sysex" x="0" y="0" width="68" height="22" id="8" state="213" group="0" font="tahoma,14,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="sysex">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_sysex/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F0" x="-12" y="22" width="50" height="22" id="9" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F0/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F2" x="-12" y="225" width="50" height="22" id="11" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F2/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F3" x="-12" y="196" width="50" height="22" id="12" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F3/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F4" x="-12" y="167" width="50" height="22" id="13" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F4/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F5" x="-12" y="138" width="50" height="22" id="14" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F5/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F6" x="-12" y="109" width="50" height="22" id="15" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F6/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F7" x="-12" y="80" width="50" height="22" id="16" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F7/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<WINDOW class="Text" text="Text_F8" x="-12" y="51" width="50" height="22" id="17" state="245" group="0" font="tahoma,18,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="8355711" content="F0">
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/Midi_view/Midi_Viewer3/Text_F8/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-</WINDOW>
-<SCRIPT name="mid_in(MIDI_ARGS)" script="decl a;
-_8.value=_7.value;
-_7.value=_6.value;
-_6.value=_5.value;
-_5.value=_4.value;
-_4.value=_3.value;
-_3.value=_2.value;
-_2.value=_1.value;
-
-
-_1.value=arraytohex(MIDI_ARGS);" trigger_script="" trigger_type="3" trigger="1" osc_message="/Midi_view/Midi_Viewer3/mid_in" midi_message="0xF0,0xF0,0,127" midi_target="0" flag="1"/>
-</WINDOW>
-<SCRIPT name="arraytohex(array)" script="decl a, b, c , i;
-c = sizeof(array)*3-1;
-a = fill(1,32,c);
-for(i = 0; i < c; i++)
-{
-   b = array[i] >> 4;
-   a[i*3] = b > 9 ? b+55 : b+48;
-   b = array[i] & 0xF;
-   a[i*3+1] = b > 9 ? b+55 : b+48;
-}
-Midi_Viewer3._1.value=a;
-return arraytostring(a);" trigger_script="" trigger_type="4" trigger="1" osc_message="/Midi_view/arraytohex" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
-</WINDOW>
-<WINDOW class="Switches" text="MyBoard" x="10" y="7" width="400" height="400" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
-<PARAM name="x=" value="1.000000,1.000000,1.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/MyBoard/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/MyBoard/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-<SCRIPT name="on(MIDI_ARGS)" script="// constants
-decl COL_PLACED = 1596013;
-decl LBL_PLACED = '';
-
-// set ON color
-decl color = getattribute(MyBoard, 'color');
-color[1] = COL_PLACED;
-setattribute(MyBoard, 'color', color);
-
-// set LABEL
-decl i = MIDI_ARGS[0];
-decl labels = getattribute(MyBoard, 'labels');
-labels[i] = LBL_PLACED;
-setattribute(MyBoard, 'labels', labels);
-
-// set ON state
-MyBoard.x[i] = 1;" trigger_script="" trigger_type="3" trigger="1" osc_message="/MyBoard/on" midi_message="0x90,0x93,0,24" midi_target="0" flag="1"/>
-<SCRIPT name="off(MIDI_ARGS)" script="decl CH_EMPTY = 1, CH_MISS = 2, CH_HIT = 3;
-decl COL_EMPTY = 865343, COL_MISS = COL_EMPTY, COL_HIT = 4130354;
-decl LBL_EMPTY = '', LBL_MISS = 'o', LBL_HIT = LBL_EMPTY;
-
-decl i = MIDI_ARGS[0], ch = MIDI_ARGS[2];
-decl colors = getattribute(MyBoard, 'colors'), labels = getattribute(MyBoard, 'labels');
-decl color, label;
-if (ch == CH_EMPTY) {
-  color = COL_EMPTY;
-  label = LBL_EMPTY;
-} else if (ch == CH_MISS) {
-  color = COL_MISS;
-  label = LBL_MISS;
-} else if (ch == CH_HIT) {
-  color = COL_HIT;
-  label = LBL_HIT;
+decl i = OSC_ARGS[0], state = OSC_ARGS[1];
+decl colors = getattribute(us, 'colors'), labels = getattribute(us, 'labels');
+decl switch, color, label;
+if (state == OSC_DECK) {
+  switch = 1;
+  label = '';
+} else if (state == OSC_EMPTY) {
+  switch = 0;
+  color = 865343;
+  label = '';
+} else if (state == OSC_MISS) {
+  switch = 0;
+  color = 865343;
+  label = 'o';
+} else if (state == OSC_HIT) {
+  switch = 0;
+  color = 4130354;
+  label = '';
 }
+us.x[i] = switch;
 colors[i] = color;
 labels[i] = label;
-setattribute(MyBoard, 'colors', colors);
-setattribute(MyBoard, 'labels', labels);
-
-MyBoard.x[i] = 0;" trigger_script="" trigger_type="3" trigger="1" osc_message="/MyBoard/off" midi_message="0x80,0x83,0,24" midi_target="0" flag="1"/>
-<SCRIPT name="test()" script="MyBoard.x[24] = " trigger_script="" trigger_type="1" trigger="1" osc_message="/MyBoard/test" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+setattribute(us, 'colors', colors);
+setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/us/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+<SCRIPT name="lock()" script="" trigger_script="" trigger_type="4" trigger="1" osc_message="/us/lock" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+</WINDOW>
+<WINDOW class="Switches" text="them" x="594" y="50" width="400" height="400" id="3" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
+<PARAM name="x=" value="1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/them/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/them/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+</WINDOW>
+<WINDOW class="Monitor" text="osc_debug" x="0" y="659" width="1024" height="65" id="4" state="241" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="1596013" label="1" precision="3" unit="" value="1">
+<VARIABLE name="value=" value="120.350006" send="0" osc_target="0" osc_trigger="1" osc_message="/osc_debug/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<SCRIPT name="mon(OSC_ARGS)" script="osc_debug.value=OSC_ARGS;" trigger_script="" trigger_type="2" trigger="1" osc_message="/osc_debug" midi_message="0x90,0x90,0,0" midi_target="-1" flag="9"/>
 </WINDOW>
 </WINDOW>
 </JZML>

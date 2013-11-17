@@ -93,9 +93,9 @@ setattribute(them, 'colors', colors);
 setattribute(them, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="0"/>
 <SCRIPT name="draw(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
-decl switches = us.x;
-decl colors = getattribute(us, 'colors');
-decl labels = getattribute(us, 'labels');
+decl switches = them.x;
+decl colors = getattribute(them, 'colors');
+decl labels = getattribute(them, 'labels');
 
 decl i, state, size = sizeof(OSC_ARGS);
 for (i=0; i<size; i++) {
@@ -119,12 +119,12 @@ for (i=0; i<size; i++) {
   }
 }
 
-us.x = switches;
-setattribute(us, 'colors', colors);
-setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/draw" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+them.x = switches;
+setattribute(them, 'colors', colors);
+setattribute(them, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/draw" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
 </WINDOW>
 <WINDOW class="Monitor" text="osc_debug" x="0" y="659" width="1024" height="65" id="4" state="241" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="1596013" label="1" precision="3" unit="" value="1">
-<VARIABLE name="value=" value="120.350021" send="0" osc_target="0" osc_trigger="1" osc_message="/osc_debug/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<VARIABLE name="value=" value="120.350029" send="0" osc_target="0" osc_trigger="1" osc_message="/osc_debug/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <SCRIPT name="mon(OSC_ARGS)" script="osc_debug.value=OSC_ARGS;" trigger_script="" trigger_type="2" trigger="1" osc_message="/osc_debug" midi_message="0x90,0x90,0,0" midi_target="-1" flag="9"/>
 </WINDOW>
 </WINDOW>

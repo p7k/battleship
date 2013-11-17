@@ -1,8 +1,8 @@
 <JZML>
 <PROJECT version="4110" width="1024" height="724" osc_target="-1" midi_target="-1" kbmouse_target="-1" skin="Pixel"/>
 <WINDOW class="JAZZINTERFACE" text="Aurora" x="0" y="0" width="1024" height="724" state="1" group="0" font="tahoma,11,0" >
-<WINDOW class="Switches" text="us" x="30" y="50" width="400" height="400" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
-<PARAM name="x=" value="1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/us/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<WINDOW class="Switches" text="us" x="30" y="50" width="400" height="400" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="0" radio="0" row="5">
+<PARAM name="x=" value="0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1.000000,1.000000,1.000000,0.000000,0.000000,1.000000,1.000000,1.000000,0.000000,0.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/us/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/us/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <SCRIPT name="state(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
@@ -29,10 +29,41 @@ us.x[i] = switch;
 colors[i] = color;
 labels[i] = label;
 setattribute(us, 'colors', colors);
-setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/us/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/us/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="0"/>
+<SCRIPT name="draw(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
+
+decl switches = us.x;
+decl colors = getattribute(us, 'colors');
+decl labels = getattribute(us, 'labels');
+
+decl i, state, size = sizeof(OSC_ARGS);
+for (i=0; i<size; i++) {
+  state = OSC_ARGS[i];
+  if (state == OSC_DECK) {
+    switches[i] = 1;
+	colors[i] = 865343;
+    labels[i] = '';
+  } else if (state == OSC_EMPTY) {
+    switches[i] = 0;
+    colors[i] = 865343;
+    labels[i] = '';
+  } else if (state == OSC_MISS) {
+    switches[i] = 0;
+    colors[i] = 865343;
+    labels[i] = 'o';
+  } else if (state == OSC_HIT) {
+    switches[i] = 0;
+    colors[i] = 4130354;
+    labels[i] = '';
+  }
+}
+
+us.x = switches;
+setattribute(us, 'colors', colors);
+setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/us/draw" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
 </WINDOW>
 <WINDOW class="Switches" text="them" x="594" y="50" width="400" height="400" id="3" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
-<PARAM name="x=" value="1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/them/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<PARAM name="x=" value="0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/them/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/them/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <SCRIPT name="state(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
@@ -59,10 +90,41 @@ them.x[i] = switch;
 colors[i] = color;
 labels[i] = label;
 setattribute(them, 'colors', colors);
-setattribute(them, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
+setattribute(them, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="0"/>
+<SCRIPT name="draw(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
+
+decl switches = us.x;
+decl colors = getattribute(us, 'colors');
+decl labels = getattribute(us, 'labels');
+
+decl i, state, size = sizeof(OSC_ARGS);
+for (i=0; i<size; i++) {
+  state = OSC_ARGS[i];
+  if (state == OSC_DECK) {
+    switches[i] = 1;
+	colors[i] = 865343;
+    labels[i] = '';
+  } else if (state == OSC_EMPTY) {
+    switches[i] = 0;
+    colors[i] = 865343;
+    labels[i] = '';
+  } else if (state == OSC_MISS) {
+    switches[i] = 0;
+    colors[i] = 865343;
+    labels[i] = 'o';
+  } else if (state == OSC_HIT) {
+    switches[i] = 0;
+    colors[i] = 4130354;
+    labels[i] = '';
+  }
+}
+
+us.x = switches;
+setattribute(us, 'colors', colors);
+setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/draw" midi_message="0x90,0x90,0,0" midi_target="-1" flag="1"/>
 </WINDOW>
 <WINDOW class="Monitor" text="osc_debug" x="0" y="659" width="1024" height="65" id="4" state="241" group="0" font="tahoma,20,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" color="1596013" label="1" precision="3" unit="" value="1">
-<VARIABLE name="value=" value="120.350014" send="0" osc_target="0" osc_trigger="1" osc_message="/osc_debug/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
+<VARIABLE name="value=" value="120.350021" send="0" osc_target="0" osc_trigger="1" osc_message="/osc_debug/value" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <SCRIPT name="mon(OSC_ARGS)" script="osc_debug.value=OSC_ARGS;" trigger_script="" trigger_type="2" trigger="1" osc_message="/osc_debug" midi_message="0x90,0x90,0,0" midi_target="-1" flag="9"/>
 </WINDOW>
 </WINDOW>

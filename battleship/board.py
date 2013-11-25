@@ -1,16 +1,22 @@
+import logging
 from fysom import Fysom
 import networkx as nx
 from battleship import midi
 
+logging.basicConfig(
+    format='%(asctime)-24s%(levelname)-10s%(name)-25s%(message)s',
+    level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 class Tile(Fysom):
-    """Belongs to a board and a ship"""
+    """Belongs to a board"""
     symbols = dict(sea='~', deck='#', miss='o', hit='x')
 
-    def __init__(self, i, j, board=None, ship=None):
+    def __init__(self, i, j, board):
         self.i, self.j = i, j
+        self.idx = i * board.n + j
         self.board = board
-        self.ship = ship
         super().__init__(
             dict(initial='sea',
                  events=(dict(name='set',   src=('sea', 'deck'), dst='deck'),
@@ -19,42 +25,30 @@ class Tile(Fysom):
                          dict(name='fire',  src='deck',          dst='hit'))))
 
     def onbeforeset(self, e):
-        """checks to see if the board is complete"""
-        if self.board:
-            if self.board.isstate('complete'):
-                return False
-
-    def onset(self, e):
-        """actually adds to board decks"""
-        if self.board:
-            self.board.add(tile=self)
-
-    def onreset(self, e):
-        """removes from board decks"""
-        if self.board and self in self.board.decks:
-            self.board.decks.remove(self)
-            self.board.remove()
-
-    def ondeck(self, e):
-        """start sfx"""
-        print('added a deck, start playing a loop')
-        if self.board:
-            midi.start(self.board.idx(self) + 36)
+        """prevents decks if board is full"""
+        if self.board.isstate('full'):
+            return False
 
     def onsea(self, e):
-        """stop sfx"""
-        if self.board:
-            midi.stop(self.board.idx(self) + 36)
+        """removes from board decks"""
+        logger.debug('sea state - remove from board, stop loop')
+        self.board.remove(tile=self)
+        midi.stop(self.idx + 36)
+
+    def ondeck(self, e):
+        """adds to board decks"""
+        logger.debug('deck state - add to board, start loop')
+        self.board.add(tile=self)
+        midi.start(self.idx + 36)
 
     def onhit(self, e):
-        """notifies the ship"""
-        print('got hit, crushing the loop')
-        if self.ship:
-            self.ship.fire()
-        if self.board:
-            self.board.hit_decks.add(self)
-            self.board.player.game.stop()
-            midi.crush(self.board.idx(self) + 36)
+        """notifies the board"""
+        logger.debug('hit state - add to board hit decks, crush loop')
+        # if self.ship:
+        #     self.ship.fire()
+        self.board.hit_decks.add(self)
+        self.board.player.game.stop()
+        midi.crush(self.idx + 36)
 
     def __str__(self):
         return 'Tile({0},{1})'.format(self.i, self.j)
@@ -90,7 +84,7 @@ class Board(Fysom):
     def __init__(self, n, ship_cfg, player=None):
         self.n = n
         self.tiles = tuple(
-            tuple(Tile(i, j, board=self) for j in range(n)) for i in range(n))
+            tuple(Tile(i, j, self) for j in range(n)) for i in range(n))
         self.total_decks = 0
         self.decks = set()
         self.hit_decks = set()
@@ -100,13 +94,10 @@ class Board(Fysom):
         self.player = player
         super().__init__(
             dict(initial='partial', final='valid',
-                 events=(dict(name='add',    src='partial',  dst='complete'),
-                         dict(name='remove', src=('partial', 'complete'),
-                              dst='partial'))))
+                 events=(dict(name='add',    src='partial', dst='complete'),
+                         dict(name='remove', src='*',       dst='partial'))))
 
     def onbeforeadd(self, e):
-        if not len(self.decks) < self.total_decks:
-            raise False
         self.decks.add(e.tile)
         if len(self.decks) < self.total_decks:
             return False
@@ -128,9 +119,6 @@ class Board(Fysom):
 
     def tile_1d(self, i):
         return self.tiles[i // self.n][i % self.n]
-
-    def idx(self, tile):
-        return tile.i * self.n + tile.j
 
     def _detect_ships(self):
         graph = nx.Graph()
@@ -154,7 +142,6 @@ class Board(Fysom):
                     if hor_edges:
                         return []
                     graph.add_edge(deck, adj)
-
         return nx.connected_components(graph)
 
     def __str__(self):

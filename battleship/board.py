@@ -13,47 +13,28 @@ class Tile(Fysom):
     """Belongs to a board"""
     symbols = dict(sea='~', deck='#', miss='o', hit='x')
 
-    def __init__(self, i, j, board):
-        self.i, self.j = i, j
-        self.idx = i * board.n + j
-        self.board = board
+    def __init__(self, midi_pitch=None):
+        self.midi_pitch = midi_pitch
         super().__init__(
             dict(initial='sea',
-                 events=(dict(name='set',   src=('sea', 'deck'), dst='deck'),
-                         dict(name='reset', src=('deck', 'sea'), dst='sea'),
-                         dict(name='fire',  src='sea',           dst='miss'),
-                         dict(name='fire',  src='deck',          dst='hit'))))
-
-    def onbeforeset(self, e):
-        """prevents decks if board is full"""
-        if self.board.isstate('full'):
-            return False
+                 events=(dict(name='on',   src='*',    dst='deck'),
+                         dict(name='off', src='*',    dst='sea'),
+                         dict(name='fire',  src='sea',  dst='miss'),
+                         dict(name='fire',  src='deck', dst='hit'))))
 
     def onsea(self, e):
-        """removes from board decks"""
-        logger.debug('sea state - remove from board, stop loop')
-        self.board.remove(tile=self)
-        midi.stop(self.idx + 36)
+        if self.midi_pitch:
+            midi.stop(self.midi_pitch)
 
     def ondeck(self, e):
-        """adds to board decks"""
-        logger.debug('deck state - add to board, start loop')
-        self.board.add(tile=self)
-        midi.start(self.idx + 36)
+        if self.midi_pitch:
+            midi.start(self.midi_pitch)
 
     def onhit(self, e):
-        """notifies the board"""
-        logger.debug('hit state - add to board hit decks, crush loop')
-        # if self.ship:
-        #     self.ship.fire()
-        self.board.hit_decks.add(self)
-        self.board.player.game.stop()
-        midi.crush(self.idx + 36)
+        if self.midi_pitch:
+            midi.crush(self.midi_pitch)
 
     def __str__(self):
-        return 'Tile({0},{1})'.format(self.i, self.j)
-
-    def __repr__(self):
         return self.symbols[self.current]
 
 
@@ -78,37 +59,70 @@ class Ship(Fysom):
         print('ship sunk, stop the noise')
 
 
-class Board(Fysom):
-    """keeps track of tiles"""
+def process_ship_specs(specs):
+    """Validates, sums up the decks and freezes the spec:
+        - Return:   tuple(frozenset(specs), deck_sum)
+    """
+    sizes_seen = set()
+    deck_sum = 0
+    for size, qty in specs:
+        assert size not in sizes_seen, 'Duplicate ship size in specs'
+        deck_sum += size * qty
+    return frozenset(specs), deck_sum
 
-    def __init__(self, n, ship_cfg, player=None):
-        self.n = n
-        self.tiles = tuple(
-            tuple(Tile(i, j, self) for j in range(n)) for i in range(n))
-        self.total_decks = 0
-        self.decks = set()
-        self.hit_decks = set()
-        self.ship_cfg = ship_cfg
-        for n_decks, qty in self.ship_cfg:
-            self.total_decks += n_decks * qty
-        self.player = player
+
+class Board(Fysom):
+    """Represents the game board.
+    Tiles are stored in a 1D tuple structure.
+    """
+    def __init__(self, n, ship_specs, player=None):
+        # spec validation
+        self.ship_specs, self.n_decks = process_ship_specs(ship_specs)
+        assert n**2 > self.n_decks * 2, 'Ships occupy too much of the board.'
+        # main storage
+        self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
+        # keeping track of decks
+        self._decks, self._decks_hit = set(), set()
+        # ship placement fsm
         super().__init__(
-            dict(initial='partial', final='valid',
-                 events=(dict(name='add',    src='partial', dst='complete'),
-                         dict(name='remove', src='*',       dst='partial'))))
+            dict(initial='empty',
+                 events=(dict(name='add',    src='empty',    dst='partial'),
+                         dict(name='add',    src='partial',  dst='complete'),
+                         dict(name='remove', src='complete', dst='partial'),
+                         dict(name='remove', src='partial',  dst='empty'))))
+        # TODO ?
+        self.player = player
+
+    def fire(self, i):
+        tile = self.tile_1d(i)
+        tile.fire()
+        if tile.isstate('hit'):
+            self.hit_decks.add(tile)
+            self.board.player.game.stop()
 
     def onbeforeadd(self, e):
-        self.decks.add(e.tile)
-        if len(self.decks) < self.total_decks:
+        assert e.i not in self._decks, 'Deck already added.'
+        self._decks.add(e.i)
+        self._tiles[e.i].on()
+        if e.dst == 'complete' and len(self._decks) < self.n_decks:
+            return False
+
+    def onbeforeremove(self, e):
+        tile = self.tile_1d(e.i)
+        tile.reset()
+        self.decks.remove(tile)
+        if e.dst == 'empty' and self.decks:
             return False
 
     def oncomplete(self, e):
-        ships_to_pack = self._detect_ships()
+        ships = self._detect_ships()
         # validate
         freq = dict()
-        for ship_to_pack in ships_to_pack:
-            freq.setdefault(len(ship_to_pack), []).append(0)
-        if ships_to_pack and all((k, len(freq[k])) in self.ship_cfg for k in freq):
+        for ship in ships:
+            ship_size = len(ship)
+            freq.setdefault(ship_size, 0)
+            freq[ship_size] += 1
+        if ships and all(cfg in self.ship_cfg for cfg in freq.items()):
             print('board complete and valid')
             if self.player:
                 self.player.valid()
@@ -116,9 +130,6 @@ class Board(Fysom):
     def onpartial(self, e):
         if self.player:
             self.player.invalid()
-
-    def tile_1d(self, i):
-        return self.tiles[i // self.n][i % self.n]
 
     def _detect_ships(self):
         graph = nx.Graph()
@@ -145,7 +156,9 @@ class Board(Fysom):
         return nx.connected_components(graph)
 
     def __str__(self):
-        edge = '|{}|'.format('-' * (self.n * 2 + 1))
-        rows = '\n'.join(
-            '| {} |'.format(' '.join(map(repr, row))) for row in self.tiles)
-        return '{edge}\n{rows}\n{edge}'.format(**locals())
+        edge = '|{}|'.format('-' * (self.n*2 + 1))
+        rows = []
+        for i in range(0, self.n**2, self.n):
+            row = '| {} |'.format(' '.join(map(str, self._tiles[i:i+self.n])))
+            rows.append(row)
+        return '{edge}\n{rows}\n{edge}'.format(edge=edge, rows='\n'.join(rows))

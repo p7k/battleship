@@ -81,8 +81,10 @@ class Board(Fysom):
         assert n**2 > self.n_decks * 2, 'Ships occupy too much of the board.'
         # main storage
         self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
-        # keeping track of decks
-        self._decks, self._decks_hit = set(), set()
+        # graph of decks
+        self._decks = nx.Graph()
+        # keeping track of hit decks
+        self._hits = set()
         # ship placement fsm
         super().__init__(
             dict(initial='empty',
@@ -93,17 +95,42 @@ class Board(Fysom):
         # TODO ?
         self.player = player
 
-    def fire(self, i):
-        tile = self.tile_1d(i)
-        tile.fire()
-        if tile.isstate('hit'):
-            self.hit_decks.add(tile)
-            self.board.player.game.stop()
+    def _adjacents(self, i):
+        n = self.n
+        return (i - 1 if i % n != 0 else None,        # left edge
+                i + n if i + n < n**2 else None,      # bottom edge
+                i - n if i - n >= 0 else None,        # top edge
+                i + 1 if (i + 1) % n != 0 else None)  # right edge
+
+    def _grouped_adjacents(self, i):
+        h, j, k, l = self._adjacents(i)
+        return (tuple(adj for adj in (h, l) if adj in self._decks),  # horiz
+                tuple(adj for adj in (j, k) if adj in self._decks))  # vert
+
+    def _is_legal(self, hl, jk):
+        """Checks legality of position given its horizontal and vertical
+        adjacents.
+        Checks whether:
+            a. immediate adjacents in diff planes
+            b. horizontal adjacents have their own vertical adjacents
+            c. vertical adjacents have their own horizontal adjacents
+        """
+        return not any((hl and jk,
+                        any(self._grouped_adjacents(h)[1] for h in hl),
+                        any(self._grouped_adjacents(v)[0] for v in jk)))
 
     def onbeforeadd(self, e):
-        assert e.i not in self._decks, 'Deck already added.'
-        self._decks.add(e.i)
+        # check legality
+        hl, jk = self._grouped_adjacents(e.i)
+        if not self._is_legal(hl, jk):
+            return False
+        # build the deck graph
+        self._decks.add_node(e.i)
+        for adj in (hl or jk):
+            self._decks.add_edge(e.i, adj)
+        # turn the tile on
         self._tiles[e.i].on()
+        # check completeness
         if e.dst == 'complete' and len(self._decks) < self.n_decks:
             return False
 
@@ -131,10 +158,14 @@ class Board(Fysom):
         if self.player:
             self.player.invalid()
 
+    def fire(self, i):
+        tile = self.tile_1d(i)
+        tile.fire()
+        if tile.isstate('hit'):
+            self._hits.add(tile)
+            self.board.player.game.stop()
+
     def _detect_ships(self):
-        graph = nx.Graph()
-        # all decks are nodes
-        graph.add_nodes_from(self.decks)
         # edges exist between proper neighbors
         for deck in self.decks:
             k = self.tiles[max(deck.i - 1, 0)][deck.j]

@@ -59,7 +59,7 @@ class TestBoard(unittest.TestCase):
         self.board.add(i=14)
         self.board.add(i=19)
         # 1-deck
-        self.board.add(i=8)
+        self.board.add(i=11)
         self.assertTrue(self.board.isstate('partial'))
         # 1-deck
         # self.board.add(i=2)

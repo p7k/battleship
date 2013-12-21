@@ -135,14 +135,13 @@ class Board(Fysom):
             return False
 
     def onbeforeremove(self, e):
-        tile = self.tile_1d(e.i)
-        tile.reset()
-        self.decks.remove(tile)
-        if e.dst == 'empty' and self.decks:
+        self._decks.remove_node(e.i)
+        self._tiles[e.i].off()
+        if e.dst == 'empty' and self._decks:
             return False
 
     def oncomplete(self, e):
-        ships = self._detect_ships()
+        ships = nx.connected_components(self._decks)
         # validate
         freq = dict()
         for ship in ships:
@@ -164,27 +163,6 @@ class Board(Fysom):
         if tile.isstate('hit'):
             self._hits.add(tile)
             self.board.player.game.stop()
-
-    def _detect_ships(self):
-        # edges exist between proper neighbors
-        for deck in self.decks:
-            k = self.tiles[max(deck.i - 1, 0)][deck.j]
-            j = self.tiles[min(deck.i + 1, self.n - 1)][deck.j]
-            h = self.tiles[deck.i][max(deck.j - 1, 0)]
-            l = self.tiles[deck.i][min(deck.j + 1, self.n - 1)]
-            # if has both hor and ver neigbors - wrong
-            # TODO rewrite
-            hor_edges = False
-            for adj in (h, l):
-                if not adj == deck and adj.isstate('deck'):
-                    hor_edges = True
-                    graph.add_edge(deck, adj)
-            for adj in (j, k):
-                if not adj == deck and adj.isstate('deck'):
-                    if hor_edges:
-                        return []
-                    graph.add_edge(deck, adj)
-        return nx.connected_components(graph)
 
     def __str__(self):
         edge = '|{}|'.format('-' * (self.n*2 + 1))

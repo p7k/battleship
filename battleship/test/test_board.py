@@ -48,28 +48,28 @@ class TestBoard(unittest.TestCase):
     def test_add_horizontal_ship(self):
         # ship
         for i in [5, 6, 7]:
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
         # invalids
         for i in chain([0, 1, 2], [10, 11, 12]):
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('sea'), i)
 
     def test_add_vertical_ship(self):
         # ship
         for i in [1, 6, 11]:
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
         # invalids
         for i in chain([0, 5, 10], [2, 7, 12]):
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('sea'), i)
 
     def test_add_invalid_ship_by_connecting_two_others(self):
         for i in chain([0, 1], [11]):
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
-        self.board.add(i=6)
+        self.board.add(6)
         self.assertTrue(self.board._tiles[6].isstate('sea'))
 
     def test_add_all_ships(self):
@@ -77,11 +77,10 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(self.board.isstate('empty'))
         # add all but one 1-deck ship
         for i in chain([0, 5, 10, 15], [21, 22, 23], [14, 19], [8]):
-            self.board.add(i=i)
+            self.board.add(i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
             self.assertTrue(self.board.isstate('partial'), i)
         # last 1-deck ship, should make board complete
         # self.board.add(i=2)
         # self.assertTrue(self.board.isstate('complete'))
         print(self.board)
-        print(self.board._ships)

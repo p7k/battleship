@@ -83,6 +83,8 @@ class Board(Fysom):
         self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
         self._decks = nx.Graph()
+        # set of ship sets
+        self.ships = set()
         # keeping track of hit decks
         self._hits = set()
         # ship placement fsm
@@ -107,27 +109,38 @@ class Board(Fysom):
         return (tuple(adj for adj in (h, l) if adj in self._decks),  # horiz
                 tuple(adj for adj in (j, k) if adj in self._decks))  # vert
 
-    def _is_legal(self, hl, jk):
-        """Checks legality of position given its horizontal and vertical
-        adjacents.
-        Checks whether:
-            a. immediate adjacents in diff planes
-            b. horizontal adjacents have their own vertical adjacents
-            c. vertical adjacents have their own horizontal adjacents
-        """
-        return not any((hl and jk,
-                        any(self._grouped_adjacents(h)[1] for h in hl),
-                        any(self._grouped_adjacents(v)[0] for v in jk)))
+    # def _is_legal(self, hl, jk):
+    #     """Checks legality of position given its horizontal and vertical
+    #     adjacents.
+    #     Checks whether:
+    #         a. immediate adjacents in diff planes
+    #         b. horizontal adjacents have their own vertical adjacents
+    #         c. vertical adjacents have their own horizontal adjacents
+    #     """
+    #     return not any((hl and jk,
+    #                     any(self._grouped_adjacents(h)[1] for h in hl),
+    #                     any(self._grouped_adjacents(v)[0] for v in jk)))
+
+    def _is_legal(self, tile_group):
+        """Checks legality of a tile group by running a check on the algebraic
+        series.  A group should have an interval of n or 1 to be a proper
+        series.  Otherwise, the sums won't be equal."""
+        actual_sum = sum(tile_group)
+        series_sum = len(tile_group) * (min(tile_group) + max(tile_group)) // 2
+        return actual_sum == series_sum
 
     def onbeforeadd(self, e):
-        # check legality
-        hl, jk = self._grouped_adjacents(e.i)
-        if not self._is_legal(hl, jk):
-            return False
         # build the deck graph
+        hl, jk = self._grouped_adjacents(e.i)
         self._decks.add_node(e.i)
         for adj in (hl or jk):
             self._decks.add_edge(e.i, adj)
+
+        # check basic legality
+        tile_group = nx.dfs_preorder_nodes(self._decks, e.i)
+        if not self._is_legal(tile_group):
+            return False
+
         # turn the tile on
         self._tiles[e.i].on()
         # check completeness

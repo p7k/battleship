@@ -1,4 +1,6 @@
 import logging
+from itertools import count
+from collections import Counter
 from fysom import Fysom
 import networkx as nx
 from battleship import midi
@@ -82,8 +84,9 @@ class Board(Fysom):
         self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
         self._decks = nx.Graph()
-        # set of ship sets
-        self.ships = set()
+        # hash of tile to ship
+        self._ships = {}
+        self._ships_seq = count()
         # keeping track of hit decks
         self._hits = set()
         # ship placement fsm
@@ -115,12 +118,22 @@ class Board(Fysom):
         for adj in self._adjacents(e.i):
             if adj in self._decks:
                 self._decks.add_edge(e.i, adj)
-
         # check basic legality
-        tiles = tuple(nx.dfs_preorder_nodes(self._decks, e.i))
+        tiles = frozenset(nx.dfs_preorder_nodes(self._decks, e.i))
         if not self._is_alligned(tiles):
             self._decks.remove_node(e.i)
             return False
+
+        # ships
+        ships = Counter()
+        for tile in tiles:
+            ship = self._ships.get(tile)
+            if ship:
+                ships[ship] += 1
+        mode = ships.most_common(n=1)
+        combined_ship = mode[0][0] if mode else next(self._ships_seq)
+        for tile in tiles:
+            self._ships[tile] = combined_ship
 
         # turn the tile on
         self._tiles[e.i].on()

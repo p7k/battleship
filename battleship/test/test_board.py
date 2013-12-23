@@ -47,21 +47,21 @@ class TestBoard(unittest.TestCase):
 
     def test_add_horizontal_ship(self):
         # ship
-        for i in (5, 6, 7):
+        for i in [5, 6, 7]:
             self.board.add(i=i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
         # invalids
-        for i in (0, 1, 2, 10, 11, 12):
+        for i in chain([0, 1, 2], [10, 11, 12]):
             self.board.add(i=i)
             self.assertTrue(self.board._tiles[i].isstate('sea'), i)
 
     def test_add_vertical_ship(self):
         # ship
-        for i in (1, 6, 11):
+        for i in [1, 6, 11]:
             self.board.add(i=i)
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
         # invalids
-        for i in (0, 5, 10, 2, 7, 12):
+        for i in chain([0, 5, 10], [2, 7, 12]):
             self.board.add(i=i)
             self.assertTrue(self.board._tiles[i].isstate('sea'), i)
 
@@ -84,3 +84,4 @@ class TestBoard(unittest.TestCase):
         # self.board.add(i=2)
         # self.assertTrue(self.board.isstate('complete'))
         print(self.board)
+        print(self.board._ships)

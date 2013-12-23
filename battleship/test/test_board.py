@@ -1,4 +1,5 @@
 import unittest
+from itertools import chain
 from battleship import board
 
 
@@ -44,34 +45,42 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(self.board.n_decks, 11)
         self.assertTrue(self.board.isstate('empty'))
 
-    def test_add(self):
-        # 4-deck
-        self.board.add(i=0)
-        self.assertTrue(self.board.isstate('partial'))
-        self.board.add(i=5)
-        self.board.add(i=10)
-        self.board.add(i=15)
-        # 3-deck
-        self.board.add(i=21)
-        self.board.add(i=22)
-        self.board.add(i=23)
-        # 2-deck
-        self.board.add(i=14)
-        self.board.add(i=19)
-        # 1-deck
-        self.board.add(i=11)
-        self.assertTrue(self.board.isstate('partial'))
-        # 1-deck
+    def test_add_horizontal_ship(self):
+        # ship
+        for i in (5, 6, 7):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('deck'), i)
+        # invalids
+        for i in (0, 1, 2, 10, 11, 12):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('sea'), i)
+
+    def test_add_vertical_ship(self):
+        # ship
+        for i in (1, 6, 11):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('deck'), i)
+        # invalids
+        for i in (0, 5, 10, 2, 7, 12):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('sea'), i)
+
+    def test_add_invalid_ship_by_connecting_two_others(self):
+        for i in chain([0, 1], [11]):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('deck'), i)
+        self.board.add(i=6)
+        self.assertTrue(self.board._tiles[6].isstate('sea'))
+
+    def test_add_all_ships(self):
+        # start with an empty board
+        self.assertTrue(self.board.isstate('empty'))
+        # add all but one 1-deck ship
+        for i in chain([0, 5, 10, 15], [21, 22, 23], [14, 19], [8]):
+            self.board.add(i=i)
+            self.assertTrue(self.board._tiles[i].isstate('deck'), i)
+            self.assertTrue(self.board.isstate('partial'), i)
+        # last 1-deck ship, should make board complete
         # self.board.add(i=2)
+        # self.assertTrue(self.board.isstate('complete'))
         print(self.board)
-
-    def test_add_dup(self):
-        pass
-
-    # def test_print(self):
-    #     self.board._tiles[1].on()
-    #     self.board._tiles[5].on()
-    #     self.board._tiles[5].fire()
-    #     self.board._tiles[23].fire()
-    #     print()
-    #     print(self.board)

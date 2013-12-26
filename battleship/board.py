@@ -80,7 +80,7 @@ class Board(Fysom):
                 i + 1 if (i + 1) % n != 0 else None)  # right edge
 
     def _find_ship(self, i):
-        return tuple(nx.dfs_preorder_nodes(self._decks, i))
+        return list(nx.dfs_preorder_nodes(self._decks, i))
 
     def _is_valid_ship(self, tiles):
         """Checks legality of a tile group by running a check on the algebraic

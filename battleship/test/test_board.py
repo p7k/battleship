@@ -37,8 +37,8 @@ class TestTile(unittest.TestCase):
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.board = board.Board(n=5,
-                                 ship_specs=((4, 1), (3, 1), (2, 1), (1, 2)))
+        self.board = board.Board(n=5, ship_specs=[(4, 1), (3, 1),
+                                                  (2, 1), (1, 2)])
 
     def test_init(self):
         self.assertEqual(len(self.board._tiles), 25)

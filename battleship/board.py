@@ -79,8 +79,16 @@ class Board(Fysom):
                 i - n if i - n >= 0 else None,        # top edge
                 i + 1 if (i + 1) % n != 0 else None)  # right edge
 
-    def _find_ship(self, i):
-        return list(nx.dfs_preorder_nodes(self._decks, i))
+    def _find_ship_and_adjacents(self, i):
+        """DFS work to find adjacent ships comprising the new larger ship."""
+        ship, adj_decks, adj_ships = [i], [], []
+        for adj_tile in self._adjacent_tiles(i):
+            if adj_tile in self._decks:
+                adj_decks.append(adj_tile)
+                adj_ship = list(nx.dfs_preorder_nodes(self._decks, adj_tile))
+                adj_ships.append(adj_ship)
+                ship.extend(adj_ship)
+        return ship, adj_decks, adj_ships
 
     def _is_valid_ship(self, tiles):
         """Checks legality of a tile group by running a check on the algebraic
@@ -91,13 +99,7 @@ class Board(Fysom):
     def onbeforeadd(self, e):
         i = e.args[0]
         # discover adjacent decks and ships
-        ship, adj_decks, adj_ships = [i], [], []
-        for adj_tile in self._adjacent_tiles(i):
-            if adj_tile in self._decks:
-                adj_decks.append(adj_tile)
-                adj_ship = self._find_ship(adj_tile)
-                adj_ships.append(adj_ship)
-                ship.extend(adj_ship)
+        ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
         # check basic legality
         if not self._is_valid_ship(ship):
             return False

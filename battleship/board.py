@@ -4,9 +4,6 @@ import networkx as nx
 import bintrees
 from battleship import midi
 
-logging.basicConfig(
-    format='%(asctime)-24s%(levelname)-10s%(name)-25s%(message)s',
-    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -125,12 +122,17 @@ class Board(Fysom):
 
     def onbeforeadd(self, e):
         i = e.args[0]
+        # check if already added
+        if i in self._decks:
+            logger.warn('tried to add an existing deck')
+            return False
         # discover adjacent decks and ships
         ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
         # check basic legality
         if not self._is_valid_ship(ship):
+            logger.info('invalid ship')
             return False
-        # track ship
+        # track ship, check configuration
         try:
             self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
         except MisconfiguredShips:

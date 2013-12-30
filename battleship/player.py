@@ -16,12 +16,15 @@ class Player(Process):
         self._server_address = osc_server_address
         self._queue = queue
         self._dispatcher = dispatcher.Dispatcher()
-        self._dispatcher.map(conf.OSC_US_ADDR, self._enqueue)
+        self._dispatcher.map(conf.OSC_ADDR_US, self._enqueue, 'us')
+        self._dispatcher.map(conf.OSC_ADDR_THEM, self._enqueue, 'them')
+        self._dispatcher.map(conf.OSC_ADDR_READY, self._enqueue, 'ready')
         self._last_msg = None
 
-    def _enqueue(self, *msg):
+    def _enqueue(self, args, *msg):
         if msg != self._last_msg:
-            self._queue.put((1, msg))
+            topic = args[0]
+            self._queue.put((topic, msg))
 
     def run(self):
         logger.info('starting osc server')

@@ -17,7 +17,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_receive_through_queue(self):
         # build msg
-        msg_bldr = osc_message_builder.OscMessageBuilder(conf.OSC_US_ADDR)
+        msg_bldr = osc_message_builder.OscMessageBuilder(conf.OSC_ADDR_US)
         msg_bldr.add_arg(46)
         msg_bldr.add_arg(2)
         sent_msg = msg_bldr.build()
@@ -26,7 +26,7 @@ class TestPlayer(unittest.TestCase):
         # get msg off the queue
         queued_msg = self.queue.get(timeout=1)
         # check msg
-        self.assertEqual(queued_msg, (1, tuple(sent_msg.params)))
+        self.assertEqual(queued_msg, ('us', tuple(sent_msg.params)))
 
     def tearDown(self):
         self.player.terminate()

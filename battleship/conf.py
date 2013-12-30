@@ -2,6 +2,12 @@
 
 Board, Ships, OSC, Player
 """
+import logging
+
+# logging
+logging.basicConfig(
+    format='%(asctime)-24s%(levelname)-10s%(name)-25s%(message)s',
+    level=logging.DEBUG)
 
 # board will be n^2
 BOARD_SIZE = 5
@@ -10,7 +16,9 @@ BOARD_SIZE = 5
 SHIP_SPEC = [(1, 2), (2, 1), (3, 1), (4, 1)]
 
 # osc addresses
-OSC_US_ADDR = '/us2/x'
+OSC_ADDR_US = '/us/x'
+OSC_ADDR_THEM = '/them/x'
+OSC_ADDR_READY = '/ready/x'
 
 # tuple of ip, port
 PLAYER_1 = ('0.0.0.0', 5005)

@@ -42,7 +42,6 @@ class TestBoard(unittest.TestCase):
 
     def test_init(self):
         self.assertEqual(len(self.board._tiles), 25)
-        self.assertEqual(self.board.n_decks, 11)
         self.assertTrue(self.board.isstate('empty'))
 
     def test_add_horizontal_ship(self):
@@ -81,6 +80,5 @@ class TestBoard(unittest.TestCase):
             self.assertTrue(self.board._tiles[i].isstate('deck'), i)
             self.assertTrue(self.board.isstate('partial'), i)
         # last 1-deck ship, should make board complete
-        # self.board.add(i=2)
-        # self.assertTrue(self.board.isstate('complete'))
-        print(self.board)
+        self.board.add(2)
+        self.assertTrue(self.board.isstate('complete'))

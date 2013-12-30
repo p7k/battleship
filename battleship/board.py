@@ -1,6 +1,7 @@
 import logging
 from fysom import Fysom
 import networkx as nx
+import bintrees
 from battleship import midi
 
 logging.basicConfig(
@@ -38,16 +39,43 @@ class Tile(Fysom):
         return self.symbols[self.current]
 
 
-def process_ship_specs(specs):
-    """Validates, sums up the decks and freezes the spec:
-        - Return:   tuple(frozenset(specs), deck_sum)
-    """
-    sizes_seen = set()
-    deck_sum = 0
-    for size, qty in specs:
-        assert size not in sizes_seen, 'Duplicate ship size in specs'
-        deck_sum += size * qty
-    return frozenset(specs), deck_sum
+class MisconfiguredShips(Exception):
+    pass
+
+
+class ShipTracker:
+    def __init__(self, spec):
+        self.spec = spec
+        self._size_qty, self._sizes, = bintrees.FastAVLTree(), set()
+        for size, qty in spec:
+            assert size not in self._sizes, 'Duplicate ship size in spec'
+            self._size_qty[size] = qty
+            self._sizes.add(size)
+
+    def _update_qty(self, size, delta):
+        if size in self._sizes:
+            self._size_qty[size] += delta
+
+    def _has_bigger_ships(self, size):
+        bigger_qtys = self._size_qty.value_slice(size + 1, None)
+        return any(c > 0 for c in bigger_qtys)
+
+    def add(self, size, group_sizes):
+        if sum(self._size_qty.values()) + len(group_sizes) < 1:
+            raise MisconfiguredShips('all ships have already been started')
+        qty = self._size_qty[size] if size in self._sizes else 0
+        if not (qty > 0 or self._has_bigger_ships(size)):
+            raise MisconfiguredShips('ships exhausted, no larger ships exist')
+        self._update_qty(size, -1)
+        for group_size in group_sizes:
+            self._update_qty(group_size, 1)
+
+    def remove(self, size, ungroup_sizes):
+        self._update_qty(size, 1)
+
+    def is_complete(self):
+        """Check if the configuration is complete and valid."""
+        return all(value == 0 for value in self._size_qty.values())
 
 
 class Board(Fysom):
@@ -56,8 +84,7 @@ class Board(Fysom):
     """
     def __init__(self, n, ship_specs):
         # spec validation
-        self.ship_specs, self.n_decks = process_ship_specs(ship_specs)
-        assert n**2 > self.n_decks * 2, 'Ships occupy too much of the board.'
+        self.ship_tracker = ShipTracker(ship_specs)
         # main storage
         self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
@@ -103,6 +130,11 @@ class Board(Fysom):
         # check basic legality
         if not self._is_valid_ship(ship):
             return False
+        # track ship
+        try:
+            self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
+        except MisconfiguredShips:
+            return False
         # build graph
         self._decks.add_node(i)
         for adj_deck in adj_decks:
@@ -110,27 +142,19 @@ class Board(Fysom):
         # turn the tile on
         self._tiles[i].on()
         # check completeness
-        if e.dst == 'complete' and len(self._decks) < self.n_decks:
+        if e.dst == 'complete' and not self.ship_tracker.is_complete():
             return False
 
     def onbeforeremove(self, e):
-        self._decks.remove_node(e.i)
-        self._tiles[e.i].off()
+        i = e.args[0]
+        # remove from graph, early so that adjacent ships can be discovered
+        self._decks.remove_node(i)
+        # discover adjacent decks and ships
+        ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
+        # turn the tile off
+        self._tiles[i].off()
         if e.dst == 'empty' and self._decks:
             return False
-
-    def oncomplete(self, e):
-        ships = nx.connected_components(self._decks)
-        # validate
-        freq = dict()
-        for ship in ships:
-            ship_size = len(ship)
-            freq.setdefault(ship_size, 0)
-            freq[ship_size] += 1
-        if ships and all(cfg in self.ship_cfg for cfg in freq.items()):
-            print('board complete and valid')
-            if self.player:
-                self.player.valid()
 
     def fire(self, i):
         tile = self.tile_1d(i)

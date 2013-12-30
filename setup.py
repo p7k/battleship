@@ -9,6 +9,7 @@ setup(name='battleship',
       include_package_data=True,
       install_requires=[
           'fysom',
+          'bintrees',
           'rtmidi2',
       ],
       test_suite='battleship.test',

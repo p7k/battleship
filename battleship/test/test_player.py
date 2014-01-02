@@ -7,10 +7,11 @@ from battleship import player, conf, board
 class TestServerClient(unittest.TestCase):
     def setUp(self):
         self.queue = Queue()
-        ip, port = '127.0.0.1', 5005
-        self.server = player.Server((ip, port), self.queue)
+        self.player = 1
+        self.server_address = ('0.0.0.0', 5005)
+        self.server = player.Server(self.server_address, self.queue)
         self.server.start()
-        self.client = player.Client(ip, port)
+        self.client = player.Client('localhost', 5005)
         time.sleep(.1)
 
     def test_send_receive_through_queue(self):
@@ -24,13 +25,15 @@ class TestServerClient(unittest.TestCase):
         # get msg off the queue
         queued_msg = self.queue.get(timeout=1)
         # check msg
-        self.assertEqual(queued_msg, ('us', tuple(sent_msg.params)))
+        self.assertEqual(queued_msg,
+                         (self.server_address, 'us', tuple(sent_msg.params)))
 
     def test_send_receive_board_through_queue(self):
         test_board = board.Board(conf.BOARD_SIZE, conf.SHIP_SPEC)
         sent_msg = self.client.send_board(test_board, 'us')
         queued_msg = self.queue.get(timeout=1)
-        self.assertEqual(queued_msg, ('us', tuple(sent_msg.params)))
+        self.assertEqual(queued_msg,
+                         (self.server_address, 'us', tuple(sent_msg.params)))
 
     def tearDown(self):
         self.server.terminate()
@@ -39,7 +42,7 @@ class TestServerClient(unittest.TestCase):
 class TestPlayerBoard(unittest.TestCase):
     def setUp(self):
         self.queue = Queue()
-        self.server = player.Server(conf.PLAYER_1, self.queue)
+        self.server = player.Server(ip, port, self.queue)
         self.server.start()
 
     def test_board(self):

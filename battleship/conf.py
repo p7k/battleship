@@ -9,19 +9,26 @@ logging.basicConfig(
     format='%(asctime)-24s%(levelname)-10s%(name)-25s%(message)s',
     level=logging.DEBUG)
 
-# board will be n^2
+# board will be n x n
 BOARD_SIZE = 5
 
-# list of tuples of size, qty
-SHIP_SPEC = [(1, 2), (2, 1), (3, 1), (4, 1)]
+# list of tuples of (size, qty)
+SHIP_SPEC = [(1, 2),
+             (2, 1),
+             (3, 1),
+             (4, 1)]
 
 # osc addresses
-OSC_TOPICS = dict(us='/us/x', them='/them/x', ready='/ready/x')
+OSC_TOPICS = {'us': '/us/x',
+              'them': '/them/x',
+              'ready': '/ready/x'}
 
 # lemur ui
-LEMUR_UI_BOARDS = dict(us=dict(sea=0, deck=1, miss=2, hit=3),
-                       them=dict(sea=0, deck=0, miss=2, hit=3))
+LEMUR_UI_BOARDS = {'us':   {'sea': 0, 'deck': 1, 'miss': 2, 'hit': 3},
+                   'them': {'sea': 0, 'deck': 0, 'miss': 2, 'hit': 3}}
 
-# tuple of ip, port
-PLAYER_1 = ('0.0.0.0', 5005)
-PLAYER_2 = ('', 5005)
+# list of tuples of (ip, port)
+PLAYERS = [{'client': ('alice.local', 8000),
+            'server': ('0.0.0.0', 5005)},
+           {'client': ('thetis.local', 8000),
+            'server': ('0.0.0.0', 5006)}]

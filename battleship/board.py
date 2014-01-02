@@ -16,9 +16,9 @@ class Tile(Fysom):
         super().__init__(
             dict(initial='sea',
                  events=(dict(name='on',   src='*',    dst='deck'),
-                         dict(name='off', src='*',    dst='sea'),
-                         dict(name='fire',  src='sea',  dst='miss'),
-                         dict(name='fire',  src='deck', dst='hit'))))
+                         dict(name='off',  src='*',    dst='sea'),
+                         dict(name='fire', src='sea',  dst='miss'),
+                         dict(name='fire', src='deck', dst='hit'))))
 
     def onsea(self, e):
         if self.midi_pitch:
@@ -83,7 +83,7 @@ class Board(Fysom):
         # spec validation
         self.ship_tracker = ShipTracker(ship_specs)
         # main storage
-        self.n, self._tiles = n, tuple(Tile() for _ in range(n**2))
+        self.n, self.tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
         self._decks = nx.Graph()
         # keeping track of hit decks
@@ -124,13 +124,13 @@ class Board(Fysom):
         i = e.args[0]
         # check if already added
         if i in self._decks:
-            logger.warn('tried to add an existing deck')
+            logger.debug('tile already a deck [%i], skipping...', i)
             return False
         # discover adjacent decks and ships
         ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
         # check basic legality
         if not self._is_valid_ship(ship):
-            logger.info('invalid ship')
+            logger.debug('invalid ship %s', ship)
             return False
         # track ship, check configuration
         try:
@@ -142,7 +142,7 @@ class Board(Fysom):
         for adj_deck in adj_decks:
             self._decks.add_edge(i, adj_deck)
         # turn the tile on
-        self._tiles[i].on()
+        self.tiles[i].on()
         # check completeness
         if e.dst == 'complete' and not self.ship_tracker.is_complete():
             return False
@@ -154,7 +154,7 @@ class Board(Fysom):
         # discover adjacent decks and ships
         ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
         # turn the tile off
-        self._tiles[i].off()
+        self.tiles[i].off()
         if e.dst == 'empty' and self._decks:
             return False
 
@@ -169,6 +169,6 @@ class Board(Fysom):
         edge = '|{}|'.format('-' * (self.n*2 + 1))
         rows = []
         for i in range(0, self.n**2, self.n):
-            row = '| {} |'.format(' '.join(map(str, self._tiles[i:i+self.n])))
+            row = '| {} |'.format(' '.join(map(str, self.tiles[i:i+self.n])))
             rows.append(row)
         return '{edge}\n{rows}\n{edge}'.format(edge=edge, rows='\n'.join(rows))

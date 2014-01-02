@@ -1,23 +1,21 @@
 import unittest
 import time
 from multiprocessing import Queue
-from pythonosc import osc_message_builder
-from pythonosc import udp_client
 from battleship import player, conf, board
 
 
-class TestPlayer(unittest.TestCase):
+class TestServerClient(unittest.TestCase):
     def setUp(self):
         self.queue = Queue()
         ip, port = '127.0.0.1', 5005
-        self.player = player.Player((ip, port), self.queue)
-        self.player.start()
-        self.client = udp_client.UDPClient(ip, port)
+        self.server = player.Server((ip, port), self.queue)
+        self.server.start()
+        self.client = player.Client(ip, port)
         time.sleep(.1)
 
-    def test_receive_through_queue(self):
+    def test_send_receive_through_queue(self):
         # build msg
-        msg_bldr = osc_message_builder.OscMessageBuilder(conf.OSC_ADDR_US)
+        msg_bldr = player.message_builder('us')
         msg_bldr.add_arg(46)
         msg_bldr.add_arg(2)
         sent_msg = msg_bldr.build()
@@ -28,15 +26,21 @@ class TestPlayer(unittest.TestCase):
         # check msg
         self.assertEqual(queued_msg, ('us', tuple(sent_msg.params)))
 
+    def test_send_receive_board_through_queue(self):
+        test_board = board.Board(conf.BOARD_SIZE, conf.SHIP_SPEC)
+        sent_msg = self.client.send_board(test_board, 'us')
+        queued_msg = self.queue.get(timeout=1)
+        self.assertEqual(queued_msg, ('us', tuple(sent_msg.params)))
+
     def tearDown(self):
-        self.player.terminate()
+        self.server.terminate()
 
 
 class TestPlayerBoard(unittest.TestCase):
     def setUp(self):
         self.queue = Queue()
-        self.player = player.Player(conf.PLAYER_1, self.queue)
-        self.player.start()
+        self.server = player.Server(conf.PLAYER_1, self.queue)
+        self.server.start()
 
     def test_board(self):
         self.board = board.Board(conf.BOARD_SIZE, conf.SHIP_SPEC)
@@ -52,4 +56,4 @@ class TestPlayerBoard(unittest.TestCase):
                 break
 
     def tearDown(self):
-        self.player.terminate()
+        self.server.terminate()

@@ -1,6 +1,6 @@
 """Game settings.
 
-Board, Ships, OSC, Player
+Board, Ships, OSC, LEMUR_UI, Player
 """
 import logging
 
@@ -16,9 +16,11 @@ BOARD_SIZE = 5
 SHIP_SPEC = [(1, 2), (2, 1), (3, 1), (4, 1)]
 
 # osc addresses
-OSC_ADDR_US = '/us/x'
-OSC_ADDR_THEM = '/them/x'
-OSC_ADDR_READY = '/ready/x'
+OSC_TOPICS = dict(us='/us/x', them='/them/x', ready='/ready/x')
+
+# lemur ui
+LEMUR_UI_BOARDS = dict(us=dict(sea=0, deck=1, miss=2, hit=3),
+                       them=dict(sea=0, deck=0, miss=2, hit=3))
 
 # tuple of ip, port
 PLAYER_1 = ('0.0.0.0', 5005)

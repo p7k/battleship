@@ -1,8 +1,8 @@
 import logging
-from fysom import Fysom
+from fysom import Fysom, FysomError
 import networkx as nx
 import bintrees
-from battleship import midi
+from battleship import midi, conf
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +79,9 @@ class Board(Fysom):
     """Represents the game board.
     Tiles are stored in a 1D tuple structure.
     """
-    def __init__(self, n, ship_specs):
+    def __init__(self, n=conf.BOARD_SIZE, ship_spec=conf.SHIP_SPEC):
         # spec validation
-        self.ship_tracker = ShipTracker(ship_specs)
+        self.ship_tracker = ShipTracker(ship_spec)
         # main storage
         self.n, self.tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
@@ -133,10 +133,10 @@ class Board(Fysom):
             logger.debug('invalid ship %s', ship)
             return False
         # track ship, check configuration
-        try:
-            self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
-        except MisconfiguredShips:
-            return False
+        # try:
+        #     self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
+        # except MisconfiguredShips:
+        #     return False
         # build graph
         self._decks.add_node(i)
         for adj_deck in adj_decks:
@@ -149,14 +149,28 @@ class Board(Fysom):
 
     def onbeforeremove(self, e):
         i = e.args[0]
+        # check if added
+        if not i in self._decks:
+            return False
         # remove from graph, early so that adjacent ships can be discovered
         self._decks.remove_node(i)
         # discover adjacent decks and ships
         ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
         # turn the tile off
         self.tiles[i].off()
+        # check emptiness
         if e.dst == 'empty' and self._decks:
             return False
+
+    def update(self, switches):
+        for i, switch in enumerate(switches):
+            try:
+                if int(switch):
+                    self.add(i)
+                else:
+                    self.remove(i)
+            except FysomError:
+                break
 
     def fire(self, i):
         tile = self.tile_1d(i)

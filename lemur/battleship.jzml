@@ -4,32 +4,6 @@
 <WINDOW class="Switches" text="us" x="20" y="100" width="450" height="450" id="2" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="0" radio="0" row="5">
 <PARAM name="x=" value="0.000000,1.000000,1.000000,1.000000,0.000000,1.000000,0.000000,0.000000,0.000000,1.000000,1.000000,0.000000,1.000000,0.000000,1.000000,1.000000,0.000000,0.000000,1.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/us/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/us/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-<SCRIPT name="state(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
-
-decl i = OSC_ARGS[0], state = OSC_ARGS[1];
-decl colors = getattribute(us, 'colors'), labels = getattribute(us, 'labels');
-decl switch, color, label;
-if (state == OSC_DECK) {
-  switch = 1;
-  label = '';
-} else if (state == OSC_EMPTY) {
-  switch = 0;
-  color = 865343;
-  label = '';
-} else if (state == OSC_MISS) {
-  switch = 0;
-  color = 865343;
-  label = 'o';
-} else if (state == OSC_HIT) {
-  switch = 0;
-  color = 4130354;
-  label = '';
-}
-us.x[i] = switch;
-colors[i] = color;
-labels[i] = label;
-setattribute(us, 'colors', colors);
-setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/us/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="0"/>
 <SCRIPT name="draw(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
 decl switches = us.x;
@@ -65,32 +39,6 @@ setattribute(us, 'labels', labels);" trigger_script="" trigger_type="2" trigger=
 <WINDOW class="Switches" text="them" x="550" y="100" width="450" height="450" id="3" state="1" group="0" font="tahoma,10,0" send="1" osc_target="-2" midi_target="-2" kbmouse_target="-2" capture="1" color="865343,1596013" column="5" label="0" multicolor="1" multilabel="1" paint="1" radio="0" row="5">
 <PARAM name="x=" value="0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000" send="17" osc_target="0" osc_trigger="1" osc_message="/them/x" midi_target="0" midi_trigger="1" midi_message="0x90,0x90,0,24" midi_scale="0,16383" osc_scale="0.000000,1.000000" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
 <VARIABLE name="light=0" send="0" osc_target="0" osc_trigger="1" osc_message="/them/light" midi_target="-1" midi_trigger="1" midi_message="0x90,0x90,0,0" midi_scale="0,16383" kbmouse_target="-1" kbmouse_trigger="1" kbmouse_message="0,0,0" kbmouse_scale="0,1,0,1"/>
-<SCRIPT name="state(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
-
-decl i = OSC_ARGS[0], state = OSC_ARGS[1];
-decl colors = getattribute(them, 'colors'), labels = getattribute(them, 'labels');
-decl switch, color, label;
-if (state == OSC_DECK) {
-  switch = 1;
-  label = '';
-} else if (state == OSC_EMPTY) {
-  switch = 0;
-  color = 865343;
-  label = '';
-} else if (state == OSC_MISS) {
-  switch = 0;
-  color = 865343;
-  label = 'o';
-} else if (state == OSC_HIT) {
-  switch = 0;
-  color = 4130354;
-  label = '';
-}
-them.x[i] = switch;
-colors[i] = color;
-labels[i] = label;
-setattribute(them, 'colors', colors);
-setattribute(them, 'labels', labels);" trigger_script="" trigger_type="2" trigger="1" osc_message="/them/state" midi_message="0x90,0x90,0,0" midi_target="-1" flag="0"/>
 <SCRIPT name="draw(OSC_ARGS)" script="decl OSC_EMPTY = 0, OSC_DECK = 1, OSC_MISS = 2, OSC_HIT = 3; 
 
 decl switches = them.x;

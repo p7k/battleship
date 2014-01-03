@@ -1,7 +1,7 @@
 import unittest
 import time
 from multiprocessing import Queue
-from battleship import player, conf, board
+from battleship import player, board
 
 
 class TestServerClient(unittest.TestCase):
@@ -29,8 +29,7 @@ class TestServerClient(unittest.TestCase):
                          (self.server_address, 'us', tuple(sent_msg.params)))
 
     def test_send_receive_board_through_queue(self):
-        test_board = board.Board(conf.BOARD_SIZE, conf.SHIP_SPEC)
-        sent_msg = self.client.send_board(test_board, 'us')
+        sent_msg = self.client.send_board(board.Board(), 'us')
         queued_msg = self.queue.get(timeout=1)
         self.assertEqual(queued_msg,
                          (self.server_address, 'us', tuple(sent_msg.params)))
@@ -39,24 +38,9 @@ class TestServerClient(unittest.TestCase):
         self.server.terminate()
 
 
-class TestPlayerBoard(unittest.TestCase):
+class TestGame(unittest.TestCase):
     def setUp(self):
-        self.queue = Queue()
-        self.server = player.Server(ip, port, self.queue)
-        self.server.start()
+        self.game = player.Game()
 
-    def test_board(self):
-        self.board = board.Board(conf.BOARD_SIZE, conf.SHIP_SPEC)
-        while True:
-            try:
-                p, msg = self.queue.get()
-                for i, on in enumerate(msg):
-                    if on:
-                        self.board.add(i)
-                print(self.board)
-                print(self.board.current)
-            except KeyboardInterrupt:
-                break
-
-    def tearDown(self):
-        self.server.terminate()
+    def test_game(self):
+        self.game.start()

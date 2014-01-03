@@ -28,7 +28,10 @@ LEMUR_UI_BOARDS = {'us':   {'sea': 0, 'deck': 1, 'miss': 2, 'hit': 3},
                    'them': {'sea': 0, 'deck': 0, 'miss': 2, 'hit': 3}}
 
 # list of tuples of (ip, port)
-PLAYERS = [{'client': ('alice.local', 8000),
-            'server': ('0.0.0.0', 5005)},
-           {'client': ('thetis.local', 8000),
-            'server': ('0.0.0.0', 5006)}]
+PLAYERS = [{'client_address': ('alice.local', 8000),
+            'server_address': ('0.0.0.0', 5005)},
+           {'client_address': ('thrace.local', 8000),
+            'server_address': ('0.0.0.0', 5006)}]
+
+# game timeout (seconds)
+GAME_TIMEOUT = 60*10

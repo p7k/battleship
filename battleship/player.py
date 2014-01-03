@@ -1,5 +1,4 @@
 import logging
-import time
 from itertools import permutations
 from multiprocessing import Process, Queue
 from pythonosc import dispatcher, osc_server, udp_client, osc_message_builder
@@ -21,6 +20,8 @@ class Game:
         for player, opponent in permutations(self.players.values()):
             player.opponent = opponent
 
+        self.on = False
+
     def start(self):
         # clear boards
         for player in self.players.values():
@@ -40,25 +41,28 @@ class Game:
         player = self.players[server_address[1]]
         # determine and call topic handler
         topic_handler = getattr(self, '_handle_message_{}'.format(topic))
-        time.sleep(.05)
         topic_handler(player, params)
 
     def _handle_message_us(self, player, params):
-        player.board.update(params)
+        """Handles messages from player's own board. (just during setup)"""
+        if not self.on:
+            player.board.place_tiles(params)
         print(player.board)
         print(player.board.current)
-        player.publish_board()
+        player.send_board()
 
     def _handle_message_them(self, player, params):
-        player.board.update(params)
-        player.publish_board()
+        """Handles messages from player's monitor board. (game play)"""
+        if any(params):
+            self.on = True
+        player.opponent.board.attack_tiles(params)
+        player.opponent.publish_board()
 
 
 class Player:
     def __init__(self, game_queue, server_address, client_address):
         self.server = Server(server_address, game_queue)
         self.server.start()
-        time.sleep(.1)
         self.client = Client(*client_address)
 
     def send_board(self):
@@ -72,13 +76,15 @@ class Player:
         self.send_board_to_opponent()
 
 
-# client
-
-def message_builder(topic):
-    return osc_message_builder.OscMessageBuilder(conf.OSC_TOPICS[topic])
-
-
 class Client(udp_client.UDPClient):
+    def __init__(self, host, port, topic_mapping=conf.OSC_TOPICS):
+        super().__init__(host, port)
+        self.topic_mapping = topic_mapping
+
+    def message_builder(self, topic):
+        osc_address = self.topic_mapping[topic][1]
+        return osc_message_builder.OscMessageBuilder(osc_address)
+
     def send(self, msg):
         """adds logging"""
         logger.debug('OSC send <%s> on <%s> %s',
@@ -86,7 +92,7 @@ class Client(udp_client.UDPClient):
         return super().send(msg)
 
     def send_board(self, board, topic):
-        mb = message_builder(topic)
+        mb = self.message_builder(topic)
         for tile in board.tiles:
             mb.add_arg(conf.LEMUR_UI_BOARDS[topic][tile.current])
         msg = mb.build()
@@ -94,27 +100,28 @@ class Client(udp_client.UDPClient):
         return msg
 
 
-# server
-
 class Server(Process):
     name = 'battleship_osc_server'
     daemon = True
 
-    def __init__(self, server_address, queue):
+    def __init__(self, server_address, queue, topic_mapping=conf.OSC_TOPICS):
         super().__init__()
         self.server_address = server_address
         # map all the topics to osc_addresses
         self.dispatcher = dispatcher.Dispatcher()
-        for topic, osc_address in conf.OSC_TOPICS.items():
+        for topic, osc_addresses in topic_mapping.items():
+            osc_address = osc_addresses[0]
             self.dispatcher.map(osc_address, self._enqueue, osc_address, topic)
         self._queue = queue
+        self._last_message = None
 
     def _enqueue(self, args, *msg):
-        osc_addr, topic = args
-        logger.debug('OSC recv <%s> on <%s> %s',
-                     self.server_address, osc_addr, msg)
-        # time.sleep(.1)
-        self._queue.put((self.server_address, topic, msg))
+        if msg != self._last_message:
+            self._last_message = msg
+            osc_addr, topic = args
+            logger.debug('OSC recv <%s> on <%s> %s',
+                         self.server_address, osc_addr, msg)
+            self._queue.put((self.server_address, topic, msg))
 
     def run(self):
         logger.info('starting osc server')

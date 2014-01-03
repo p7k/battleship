@@ -1,5 +1,5 @@
 import logging
-from fysom import Fysom, FysomError
+from fysom import Fysom
 import networkx as nx
 import bintrees
 from battleship import midi, conf
@@ -162,22 +162,20 @@ class Board(Fysom):
         if e.dst == 'empty' and self._decks:
             return False
 
-    def update(self, switches):
+    def place_tiles(self, switches):
         for i, switch in enumerate(switches):
-            try:
-                if int(switch):
-                    self.add(i)
-                else:
-                    self.remove(i)
-            except FysomError:
-                break
+            switch = int(switch)
+            if switch == 1 and self.can('add'):
+                self.add(i)
+            elif switch == 0 and self.can('remove'):
+                self.remove(i)
 
-    def fire(self, i):
-        tile = self.tile_1d(i)
-        tile.fire()
-        if tile.isstate('hit'):
-            self._hits.add(tile)
-            self.board.player.game.stop()
+    def attack_tiles(self, switches):
+        for i, switch in enumerate(switches):
+            tile = self.tiles[i]
+            if int(switch) == 1 and tile.can('fire'):
+                tile.fire()
+                break
 
     def __str__(self):
         edge = '|{}|'.format('-' * (self.n*2 + 1))

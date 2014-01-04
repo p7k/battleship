@@ -1,62 +1,9 @@
 import logging
-from itertools import permutations
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 from pythonosc import dispatcher, osc_server, udp_client, osc_message_builder
-from battleship import conf, board
+from battleship import conf
 
 logger = logging.getLogger(__name__)
-
-
-class Game:
-    def __init__(self):
-        self.mq = Queue()
-        # init the players (by server port)
-        self.players = {}
-        for player_conf in conf.PLAYERS[:2]:
-            server_port = player_conf['server_address'][1]
-            player = Player(game_queue=self.mq, **player_conf)
-            self.players[server_port] = player
-        # link opponents
-        for player, opponent in permutations(self.players.values()):
-            player.opponent = opponent
-
-        self.on = False
-
-    def start(self):
-        # clear boards
-        for player in self.players.values():
-            player.board = board.Board()
-            player.publish_board()
-        # start mq loop
-        while True:
-            try:
-                message = self.mq.get(timeout=conf.GAME_TIMEOUT)
-                self._handle_message(message)
-            except KeyboardInterrupt:
-                break
-
-    def _handle_message(self, message):
-        server_address, topic, params = message
-        # determine player by unique port
-        player = self.players[server_address[1]]
-        # determine and call topic handler
-        topic_handler = getattr(self, '_handle_message_{}'.format(topic))
-        topic_handler(player, params)
-
-    def _handle_message_us(self, player, params):
-        """Handles messages from player's own board. (just during setup)"""
-        if not self.on:
-            player.board.place_tiles(params)
-        print(player.board)
-        print(player.board.current)
-        player.send_board()
-
-    def _handle_message_them(self, player, params):
-        """Handles messages from player's monitor board. (game play)"""
-        if any(params):
-            self.on = True
-        player.opponent.board.attack_tiles(params)
-        player.opponent.publish_board()
 
 
 class Player:

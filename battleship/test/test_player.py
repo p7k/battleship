@@ -39,11 +39,3 @@ class TestServerClient(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.server.terminate()
-
-
-class TestGame(unittest.TestCase):
-    def setUp(self):
-        self.game = player.Game()
-
-    def test_game(self):
-        self.game.start()

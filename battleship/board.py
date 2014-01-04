@@ -115,10 +115,22 @@ class Board(Fysom):
         return ship, adj_decks, adj_ships
 
     def _is_valid_ship(self, tiles):
-        """Checks legality of a tile group by running a check on the algebraic
-        series.  A group should have an interval of n or 1 to be a proper
-        series.  Otherwise, the series and actual sums won't be equal."""
-        return len(tiles) * (min(tiles) + max(tiles)) // 2 == sum(tiles)
+        """Mods of the tile indecies must be either all equal (horizontal ship)
+        or form a strict  n+0, n+1, .., n+k sequence (vertical)."""
+        if len(tiles) < 2:
+            return True
+        mods = sorted(tile % self.n for tile in tiles)
+        next_mod = iter(mods)
+        next(next_mod)
+        zip_mods = zip(iter(mods), next_mod)
+        i, j = next(zip_mods)
+        if i == j:
+            is_valid = all(i == j for i, j in zip_mods)
+        elif i + 1 == j:
+            is_valid = all(i + 1 == j for i, j in zip_mods)
+        else:
+            is_valid = False
+        return is_valid
 
     def onbeforeadd(self, e):
         i = e.args[0]

@@ -112,14 +112,14 @@ class Board(Fysom):
                 adj_ship = list(nx.dfs_preorder_nodes(self._decks, adj_tile))
                 adj_ships.append(adj_ship)
                 ship.extend(adj_ship)
-        return ship, adj_decks, adj_ships
+        return sorted(ship), adj_decks, adj_ships
 
     def _is_valid_ship(self, tiles):
-        """Mods of the tile indecies must be either all equal (horizontal ship)
-        or form a strict  n+0, n+1, .., n+k sequence (vertical)."""
+        """Mods of the tile indecies must be either all equal (vertical ship)
+        or form a strict  n+0, n+1, .., n+k sequence (horizontal)."""
         if len(tiles) < 2:
             return True
-        mods = sorted(tile % self.n for tile in tiles)
+        mods = [tile % self.n for tile in tiles]
         next_mod = iter(mods)
         next(next_mod)
         zip_mods = zip(iter(mods), next_mod)

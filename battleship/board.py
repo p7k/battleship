@@ -58,7 +58,9 @@ class ShipTracker:
         return any(c > 0 for c in bigger_qtys)
 
     def add(self, size, group_sizes):
-        if sum(self._size_qty.values()) + len(group_sizes) < 1:
+        logger.debug('composing {}-deck ship of {}'.format(size, group_sizes))
+        n_ships_after = sum(self._size_qty.values()) - 1 + len(group_sizes)
+        if n_ships_after < 0:
             raise MisconfiguredShips('all ships have already been started')
         qty = self._size_qty[size] if size in self._sizes else 0
         if not (qty > 0 or self._has_bigger_ships(size)):
@@ -66,9 +68,18 @@ class ShipTracker:
         self._update_qty(size, -1)
         for group_size in group_sizes:
             self._update_qty(group_size, 1)
+        logger.debug('current ship tally: {}'.format(self._size_qty))
 
     def remove(self, size, ungroup_sizes):
+        logger.debug(
+            'decomposing {}-deck ship into of {}'.format(size, ungroup_sizes))
+        n_ships_after = sum(self._size_qty.values()) + 1 - len(ungroup_sizes)
+        if n_ships_after < 0:
+            raise MisconfiguredShips('would try to add too many ships')
         self._update_qty(size, 1)
+        for ungroup_size in ungroup_sizes:
+            self.add(ungroup_size, [])
+        logger.debug('current ship tally: {}'.format(self._size_qty))
 
     def is_complete(self):
         """Check if the configuration is complete and valid."""
@@ -169,6 +180,15 @@ class Board(fysom.Fysom):
         self._decks.remove_node(i)
         # discover adjacent decks and ships
         ship, adj_decks, adj_ships = self._find_ship_and_adjacents(i)
+        # track ship, check configuration
+        try:
+            self.ship_tracker.remove(len(ship), list(map(len, adj_ships)))
+        except MisconfiguredShips:
+            # rebuild the graph
+            self._decks.add_node(i)
+            for adj_deck in adj_decks:
+                self._decks.add_edge(i, adj_deck)
+            return False
         # turn the tile off
         self.tiles[i].off()
         # check emptiness

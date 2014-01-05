@@ -63,10 +63,8 @@ class GameManager:
                                            player.isstate('confirmation')):
             player.board.place_tiles(params)
             player.send_board()
-
         if player.board.isstate('partial') and player.can('deny'):
             player.deny()
-
         if player.board.isstate('complete') and player.can('prompt'):
             player.prompt()
 

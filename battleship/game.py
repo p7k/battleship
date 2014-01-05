@@ -11,7 +11,6 @@ class Game(fysom.Fysom):
     def __init__(self, players):
         self.players = players
         self._reset_boards()
-        self._reset_ui()
         super().__init__(
             dict(initial='setup', final='over',
                  events=(dict(name='play', src='setup',      dst='p1'),
@@ -20,17 +19,11 @@ class Game(fysom.Fysom):
                          dict(name='stop', src=('p1', 'p2'), dst='over'))))
 
     def _reset_boards(self):
-        logger.debug('resetting the boards')
+        logger.debug('resetting the boards and ui')
         for plyr in self.players.values():
             plyr.board = board.Board()
             plyr.publish_board()
-
-    def _reset_ui(self):
-        logger.debug('resetting the UI elements')
-        for plyr in self.players.values():
-            plyr.client.confirmation_button(False)
-            plyr.client.confirmation_value(False)
-            plyr.client.turn_led(False)
+            plyr.client.turn_led(on=False)
 
 
 class GameManager:
@@ -66,9 +59,16 @@ class GameManager:
 
     def _handle_message_us(self, player, params):
         """Handles messages from player's own board. (just during setup)"""
-        if self.game.isstate('setup') and player.isstate('setup'):
+        if self.game.isstate('setup') and (player.isstate('setup') or
+                                           player.isstate('confirmation')):
             player.board.place_tiles(params)
             player.send_board()
+
+        if player.board.isstate('partial') and player.can('deny'):
+            player.deny()
+
+        if player.board.isstate('complete') and player.can('prompt'):
+            player.prompt()
 
     def _handle_message_them(self, player, params):
         """Handles messages from player's monitor board. (game play)"""

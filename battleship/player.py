@@ -15,11 +15,20 @@ class Player(fysom.Fysom):
         time.sleep(.2)
         self.client = Client(*client_address)
         super().__init__(
-            dict(initial='setup', final='play',
+            dict(initial='setup', final='ready',
                  events=(dict(name='prompt', src='setup', dst='confirmation'),
                          dict(name='confirm', src='confirmation', dst='ready'),
-                         dict(name='deny', src='ready', dst='confirmation'),
-                         dict(name='play', src='ready', dst='play'))))
+                         dict(name='deny', src='confirmation', dst='setup'))))
+
+    def onsetup(self, e):
+        logger.debug('turning off prompt button')
+        self.client.confirmation_button(on=False)
+        self.client.confirmation_value(on=False)
+
+    def onconfirmation(self, e):
+        logger.debug('turning on prompt button')
+        self.client.confirmation_value(on=False)
+        self.client.confirmation_button(on=True)
 
     def send_board(self):
         self.client.send_board(self.board, 'us')

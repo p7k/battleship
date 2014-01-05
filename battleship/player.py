@@ -1,4 +1,6 @@
 import logging
+import time
+import fysom
 from multiprocessing import Process
 from pythonosc import dispatcher, osc_server, udp_client, osc_message_builder
 from battleship import conf
@@ -6,11 +8,18 @@ from battleship import conf
 logger = logging.getLogger(__name__)
 
 
-class Player:
+class Player(fysom.Fysom):
     def __init__(self, game_queue, server_address, client_address):
         self.server = Server(server_address, game_queue)
         self.server.start()
+        time.sleep(.2)
         self.client = Client(*client_address)
+        super().__init__(
+            dict(initial='setup', final='play',
+                 events=(dict(name='prompt', src='setup', dst='confirmation'),
+                         dict(name='confirm', src='confirmation', dst='ready'),
+                         dict(name='deny', src='ready', dst='confirmation'),
+                         dict(name='play', src='ready', dst='play'))))
 
     def send_board(self):
         self.client.send_board(self.board, 'us')
@@ -37,6 +46,21 @@ class Client(udp_client.UDPClient):
         logger.debug('OSC send <%s> on <%s> %s',
                      (self._address, self._port), msg.address, msg.params)
         return super().send(msg)
+
+    def confirmation_button(self, on=True):
+        mb = self.message_builder('ready_light')
+        mb.add_arg(0 if on else -2)
+        self.send(mb.build())
+
+    def confirmation_value(self, on=True):
+        mb = self.message_builder('ready')
+        mb.add_arg(1 if on else 0)
+        self.send(mb.build())
+
+    def turn_led(self, on=True):
+        mb = self.message_builder('turn_light')
+        mb.add_arg(0 if on else -2)
+        self.send(mb.build())
 
     def send_board(self, board, topic):
         mb = self.message_builder(topic)

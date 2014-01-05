@@ -1,13 +1,13 @@
 import logging
-from fysom import Fysom
-import networkx as nx
 import bintrees
+import fysom
+import networkx
 from battleship import midi, conf
 
 logger = logging.getLogger(__name__)
 
 
-class Tile(Fysom):
+class Tile(fysom.Fysom):
     """Belongs to a board"""
     symbols = dict(sea='~', deck='#', miss='o', hit='x')
 
@@ -75,7 +75,7 @@ class ShipTracker:
         return all(value == 0 for value in self._size_qty.values())
 
 
-class Board(Fysom):
+class Board(fysom.Fysom):
     """Represents the game board.
     Tiles are stored in a 1D tuple structure.
     """
@@ -85,7 +85,7 @@ class Board(Fysom):
         # main storage
         self.n, self.tiles = n, tuple(Tile() for _ in range(n**2))
         # graph of decks
-        self._decks = nx.Graph()
+        self._decks = networkx.Graph()
         # keeping track of hit decks
         self._hits = set()
         # ship placement fsm
@@ -109,7 +109,8 @@ class Board(Fysom):
         for adj_tile in self._adjacent_tiles(i):
             if adj_tile in self._decks:
                 adj_decks.append(adj_tile)
-                adj_ship = list(nx.dfs_preorder_nodes(self._decks, adj_tile))
+                adj_ship = list(networkx.dfs_preorder_nodes(self._decks,
+                                                            adj_tile))
                 adj_ships.append(adj_ship)
                 ship.extend(adj_ship)
         return sorted(ship), adj_decks, adj_ships
@@ -145,10 +146,10 @@ class Board(Fysom):
             logger.debug('invalid ship %s', ship)
             return False
         # track ship, check configuration
-        # try:
-        #     self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
-        # except MisconfiguredShips:
-        #     return False
+        try:
+            self.ship_tracker.add(len(ship), list(map(len, adj_ships)))
+        except MisconfiguredShips:
+            return False
         # build graph
         self._decks.add_node(i)
         for adj_deck in adj_decks:

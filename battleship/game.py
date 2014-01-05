@@ -1,17 +1,36 @@
+import logging
 import multiprocessing
-from itertools import permutations
+import itertools
+import fysom
 from battleship import board, conf, player
 
+logger = logging.getLogger(__name__)
 
-class Game:
+
+class Game(fysom.Fysom):
     def __init__(self, players):
         self.players = players
         self._reset_boards()
+        self._reset_ui()
+        super().__init__(
+            dict(initial='setup', final='over',
+                 events=(dict(name='play', src='setup',      dst='p1'),
+                         dict(name='turn', src='p1',         dst='p2'),
+                         dict(name='turn', src='p2',         dst='p1'),
+                         dict(name='stop', src=('p1', 'p2'), dst='over'))))
 
     def _reset_boards(self):
+        logger.debug('resetting the boards')
         for plyr in self.players.values():
             plyr.board = board.Board()
             plyr.publish_board()
+
+    def _reset_ui(self):
+        logger.debug('resetting the UI elements')
+        for plyr in self.players.values():
+            plyr.client.confirmation_button(False)
+            plyr.client.confirmation_value(False)
+            plyr.client.turn_led(False)
 
 
 class GameManager:
@@ -24,10 +43,8 @@ class GameManager:
             plyr = player.Player(game_queue=self.mq, **player_conf)
             self.players[server_port] = plyr
         # link opponents
-        for plyr, opponent in permutations(self.players.values()):
+        for plyr, opponent in itertools.permutations(self.players.values()):
             plyr.opponent = opponent
-
-        self.on = False
 
     def start(self):
         self.game = Game(self.players)
@@ -49,15 +66,20 @@ class GameManager:
 
     def _handle_message_us(self, player, params):
         """Handles messages from player's own board. (just during setup)"""
-        if not self.on:
+        if self.game.isstate('setup') and player.isstate('setup'):
             player.board.place_tiles(params)
-        print(player.board)
-        print(player.board.current)
-        player.send_board()
+            player.send_board()
 
     def _handle_message_them(self, player, params):
         """Handles messages from player's monitor board. (game play)"""
-        if any(params):
-            self.on = True
+        if any(params) and self.game.can('play'):
+            self.game.play()
         player.opponent.board.attack_tiles(params)
         player.opponent.publish_board()
+
+    def _handle_message_ready(self, player, params):
+        """Handles messages from the confirmation button."""
+        if player.can('confirm') and all(params):
+            player.confirm()
+        elif player.can('deny'):
+            player.deny()

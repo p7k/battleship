@@ -87,14 +87,14 @@ class TestBoard(unittest.TestCase):
         self.board.add(12)
         self.assertTrue(self.board.tiles[12].isstate('sea'), 12)
 
-    # def test_add_all_ships(self):
-    #     # start with an empty board
-    #     self.assertTrue(self.board.isstate('empty'))
-    #     # add all but one 1-deck ship
-    #     for i in chain([0, 5, 10, 15], [21, 22, 23], [14, 19], [8]):
-    #         self.board.add(i)
-    #         self.assertTrue(self.board.tiles[i].isstate('deck'), i)
-    #         self.assertTrue(self.board.isstate('partial'), i)
-    #     # last 1-deck ship, should make board complete
-    #     self.board.add(2)
-    #     self.assertTrue(self.board.isstate('complete'))
+    def test_add_all_ships(self):
+        # start with an empty board
+        self.assertTrue(self.board.isstate('empty'))
+        # add all but one 1-deck ship
+        for i in chain([0, 5, 10, 15], [21, 22, 23], [14, 19], [8]):
+            self.board.add(i)
+            self.assertTrue(self.board.tiles[i].isstate('deck'), i)
+            self.assertTrue(self.board.isstate('partial'), i)
+        # last 1-deck ship, should make board complete
+        self.board.add(2)
+        self.assertTrue(self.board.isstate('complete'))

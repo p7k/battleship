@@ -22,7 +22,9 @@ SHIP_SPEC = [(1, 2),
 OSC_TOPICS = {'us': ('/us/x', '/us/draw'),
               'them': ('/them/x', '/them/draw'),
               'ready': ('/ready/x', '/ready/x'),
-              'ready_light': ('/ready/light', '/ready/light')}
+              'ready_light': ('/ready/light', '/ready/light'),
+              'turn': ('/turn/value', '/turn/value'),
+              'turn_light': ('/turn/light', '/turn/light')}
 
 # lemur ui
 LEMUR_UI_BOARDS = {'us':   {'sea': 0, 'deck': 1, 'miss': 2, 'hit': 3},

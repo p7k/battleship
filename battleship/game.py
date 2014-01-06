@@ -12,6 +12,7 @@ class Game(fysom.Fysom):
     def __init__(self, players):
         logger.info('starting new game')
         self.players = players
+        self.turn_player = None
         self._reset_boards()
         super().__init__(
             dict(initial='setup', final='over',
@@ -23,6 +24,21 @@ class Game(fysom.Fysom):
     def onbeforeplay(self, e):
         if not all(plyr.isstate('ready') for plyr in self.players.values()):
             return False
+        logger.info('both players are ready')
+        # turn off the confirmation buttons
+        for plyr in self.players.values():
+            plyr.client.confirmation_button(on=False)
+        # indicate turn
+        self.turn_player.client.turn_led(on=True)
+        self.turn_player.opponent.client.turn_led(on=False)
+
+    def onturn(self, e):
+        self.turn_player = self.turn_player.opponent
+        self.turn_player.client.turn_led(on=True)
+        self.turn_player.opponent.client.turn_led(on=False)
+
+    def onover(self, e):
+        logger.info('game over')
 
     def _reset_boards(self):
         logger.debug('resetting the boards and ui')
@@ -55,6 +71,8 @@ class GameManager:
             except queue.Empty:
                 self.game = Game(self.players)
             except KeyboardInterrupt:
+                self.game = Game(self.players)
+                print('Thanks for playing')
                 break
 
     def _handle_message(self, message):
@@ -63,7 +81,10 @@ class GameManager:
         player = self.players[server_address[1]]
         # determine and call topic handler
         topic_handler = getattr(self, '_handle_message_{}'.format(topic))
-        topic_handler(player, params)
+        if not self.game.isstate('over'):
+            topic_handler(player, params)
+        else:
+            logging.info('game is over, ignoring ui messages')
 
     def _handle_message_us(self, player, params):
         """Handles messages from player's own board. (just during setup)"""
@@ -80,15 +101,31 @@ class GameManager:
 
     def _handle_message_them(self, player, params):
         """Handles messages from player's monitor board. (game play)"""
-        player.opponent.board.attack_tiles(params)
+        if player is self.game.turn_player:
+            board = player.opponent.board
+            for i, param in enumerate(params):
+                tile = board.tiles[i]
+                if param == 1 and tile.can('fire'):
+                    tile.fire()
+                    if tile.isstate('miss'):
+                        self.game.turn()
+                    elif tile.isstate('hit'):
+                        board._hits.add(i)
+            # check if game is over
+            if board.all_ships_destroyed():
+                self.game.stop()
         player.opponent.publish_board()
 
     def _handle_message_ready(self, player, params):
         """Handles messages from the confirmation button."""
         if player.isstate('confirmation') and all(params):
             player.confirm()
+            if self.game.turn_player is None:
+                self.game.turn_player = player
         else:
             player.deny()
+            if self.game.turn_player == player:
+                self.game.turn_player = None
         # confirmation
         if player.board.isstate('partial'):
             player.deny()

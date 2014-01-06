@@ -203,12 +203,8 @@ class Board(fysom.Fysom):
             elif switch == 0 and self.can('remove'):
                 self.remove(i)
 
-    def attack_tiles(self, switches):
-        for i, switch in enumerate(switches):
-            tile = self.tiles[i]
-            if int(switch) == 1 and tile.can('fire'):
-                tile.fire()
-                break
+    def all_ships_destroyed(self):
+        return all(self.tiles[i].isstate('hit') for i in self._decks)
 
     def __str__(self):
         edge = '|{}|'.format('-' * (self.n*2 + 1))

@@ -1,6 +1,7 @@
 import logging
 import itertools
 import multiprocessing
+import datetime
 import queue
 import fysom
 from battleship import board, conf, player
@@ -13,7 +14,7 @@ class Game(fysom.Fysom):
         logger.info('starting new game')
         self.players = players
         self.turn_player = None
-        self._reset_boards()
+        self._reset_players()
         super().__init__(
             dict(initial='setup', final='over',
                  events=(dict(name='play', src='setup', dst='p1'),
@@ -44,18 +45,19 @@ class Game(fysom.Fysom):
             for tile in plyr.board.tiles:
                 tile.midi_reset()
 
-    def _reset_boards(self):
+    def _reset_players(self):
         logger.debug('resetting the boards and ui')
         midi_pitch_set = set(conf.MIDI_PITCH_RANGE)
         for plyr in self.players.values():
             plyr.board = board.Board(midi_pitch_set=midi_pitch_set)
+            plyr.deny()
             plyr.publish_board()
-            plyr.client.turn_led(on=False)
 
 
 class GameManager:
     def __init__(self, players_conf=conf.PLAYERS):
         self.mq = multiprocessing.Queue()
+        self.last_game_ended = None
         # init the players (by server port)
         self.players = {}
         for player_conf in players_conf[:2]:
@@ -81,7 +83,7 @@ class GameManager:
             except KeyboardInterrupt:
                 self.game.stop()
                 self.game = Game(self.players)
-                print('Thanks for playing')
+                print('Stokrotka!!!')
                 break
 
     def _handle_message(self, message):
@@ -90,10 +92,14 @@ class GameManager:
         player = self.players[server_address[1]]
         # determine and call topic handler
         topic_handler = getattr(self, '_handle_message_{}'.format(topic))
-        if not self.game.isstate('over'):
-            topic_handler(player, params)
+        if self.game.isstate('over'):
+            td = datetime.datetime.now() - self.last_game_ended
+            if td.total_seconds() > conf.IGNORE_AFTER_GAME_OVER:
+                self.game = Game(self.players)
+            else:
+                logging.info('game is over, ignoring ui messages')
         else:
-            logging.info('game is over, ignoring ui messages')
+            topic_handler(player, params)
 
     def _handle_message_us(self, player, params):
         """Handles messages from player's own board. (just during setup)"""
@@ -121,6 +127,7 @@ class GameManager:
             # check if game is over
             if board.all_ships_destroyed():
                 self.game.stop()
+                self.last_game_ended = datetime.datetime.now()
         player.opponent.publish_board()
 
     def _handle_message_ready(self, player, params):

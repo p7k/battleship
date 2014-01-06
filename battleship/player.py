@@ -27,6 +27,7 @@ class Player(fysom.Fysom):
         logger.debug('turning off prompt button')
         self.client.confirmation_button(on=False)
         self.client.confirmation_value(on=False)
+        self.client.turn_led(on=False)
 
     def onconfirmation(self, e):
         logger.debug('turning on prompt button')

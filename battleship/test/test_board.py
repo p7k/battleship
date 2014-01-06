@@ -5,7 +5,7 @@ from battleship import board
 
 class TestTile(unittest.TestCase):
     def setUp(self):
-        self.tile = board.Tile(midi_pitch=36)
+        self.tile = board.Tile()
 
     def test_init(self):
         self.assertTrue(self.tile.isstate('sea'), self.tile.current)
@@ -38,7 +38,8 @@ class TestTile(unittest.TestCase):
 class TestBoard(unittest.TestCase):
     def setUp(self):
         self.board = board.Board(n=5, ship_spec=[(4, 1), (3, 1),
-                                                 (2, 1), (1, 2)])
+                                                 (2, 1), (1, 2)],
+                                 midi_pitch_set=set(range(36, 57)))
 
     def test_init(self):
         self.assertEqual(len(self.board.tiles), 25)

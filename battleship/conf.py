@@ -1,6 +1,6 @@
 """Game settings.
 
-Board, Ships, OSC, LEMUR_UI, Player
+Board, Ships, MIDI, OSC, LEMUR_UI, Player
 """
 import logging
 
@@ -17,6 +17,11 @@ SHIP_SPEC = [(1, 2),
              (2, 1),
              (3, 1),
              (4, 1)]
+
+# midi
+MIDI_DRIVER_NAME = b'IAC Driver Battleship'
+MIDI_CHANNELS = {'start': 0, 'stop': 2, 'crush': 4}
+MIDI_PITCH_RANGE = range(36, 58)
 
 # osc addresses
 OSC_TOPICS = {'us': ('/us/x', '/us/draw'),

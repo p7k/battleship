@@ -11,8 +11,9 @@ class Tile(fysom.Fysom):
     """Belongs to a board"""
     symbols = dict(sea='~', deck='#', miss='o', hit='x')
 
-    def __init__(self, midi_pitch=None):
-        self.midi_pitch = midi_pitch
+    def __init__(self, midi_pitch_set=None):
+        self.midi_pitch_set = midi_pitch_set
+        self.midi_pitch = None
         super().__init__(
             dict(initial='sea',
                  events=(dict(name='on',   src='*',    dst='deck'),
@@ -21,16 +22,35 @@ class Tile(fysom.Fysom):
                          dict(name='fire', src='deck', dst='hit'))))
 
     def onsea(self, e):
-        if self.midi_pitch:
-            midi.stop(self.midi_pitch)
+        self.midi_stop()
 
     def ondeck(self, e):
+        if not self.midi_pitch and self.midi_pitch_set:
+            self.midi_pitch = self.midi_pitch_set.pop()
+            logger.debug('midi pitch set: {}, len {}'.format(
+                self.midi_pitch_set, len(self.midi_pitch_set)))
         if self.midi_pitch:
             midi.start(self.midi_pitch)
 
     def onhit(self, e):
+        self.midi_crush()
+
+    def midi_stop(self):
+        if self.midi_pitch:
+            midi.stop(self.midi_pitch)
+            self.midi_pitch_set.add(self.midi_pitch)
+            logger.debug('midi pitch set: {}, len {}'.format(
+                self.midi_pitch_set, len(self.midi_pitch_set)))
+            self.midi_pitch = None
+
+    def midi_crush(self):
         if self.midi_pitch:
             midi.crush(self.midi_pitch)
+
+    def midi_reset(self):
+        if self.isstate('hit'):
+            self.midi_crush()
+        self.midi_stop()
 
     def __str__(self):
         return self.symbols[self.current]
@@ -87,19 +107,13 @@ class ShipTracker:
 
 
 class Board(fysom.Fysom):
-    """Represents the game board.
-    Tiles are stored in a 1D tuple structure.
-    """
-    def __init__(self, n=conf.BOARD_SIZE, ship_spec=conf.SHIP_SPEC):
-        # spec validation
+    """Represents the game board.  Tiles are stored in a 1d tuple. """
+    def __init__(self, n=conf.BOARD_SIZE, ship_spec=conf.SHIP_SPEC,
+                 midi_pitch_set=None):
+        self.n = n
         self.ship_tracker = ShipTracker(ship_spec)
-        # main storage
-        self.n, self.tiles = n, tuple(Tile() for _ in range(n**2))
-        # graph of decks
+        self.tiles = tuple(Tile(midi_pitch_set) for _ in range(n**2))
         self._decks = networkx.Graph()
-        # keeping track of hit decks
-        self._hits = set()
-        # ship placement fsm
         super().__init__(
             dict(initial='empty',
                  events=(dict(name='add',    src='empty',    dst='partial'),

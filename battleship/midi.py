@@ -1,26 +1,25 @@
 """Simple MIDI controller.
 
 All triggers are NoteOn messages.
-
-Channel 1, 2:  loop start
-Channel 3, 4:  loop stop
-Channel 5, 6:  loop crush
 """
-import rtmidi2 as midi
+import rtmidi2
+from battleship import conf
 
-DRIVER_NAME = b'IAC Driver Battleship'
+OUT = rtmidi2.MidiOut()
+OUT.open_port(OUT.ports_matching(conf.MIDI_DRIVER_NAME)[0])
 
-OUT = midi.MidiOut()
-OUT.open_port(OUT.ports_matching(DRIVER_NAME)[0])
+
+def send_noteon(ch, pitch, velocity=127):
+    OUT.send_noteon(conf.MIDI_CHANNELS[ch], pitch, 127)
 
 
 def start(pitch):
-    OUT.send_noteon(0, pitch, 127)
+    send_noteon('start', pitch)
 
 
 def stop(pitch):
-    OUT.send_noteon(2, pitch, 127)
+    send_noteon('stop', pitch)
 
 
 def crush(pitch):
-    OUT.send_noteon(4, pitch, 127)
+    send_noteon('crush', pitch)

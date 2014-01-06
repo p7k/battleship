@@ -16,10 +16,10 @@ class Game(fysom.Fysom):
         self._reset_boards()
         super().__init__(
             dict(initial='setup', final='over',
-                 events=(dict(name='play', src='setup',      dst='p1'),
-                         dict(name='turn', src='p1',         dst='p2'),
-                         dict(name='turn', src='p2',         dst='p1'),
-                         dict(name='stop', src=('p1', 'p2'), dst='over'))))
+                 events=(dict(name='play', src='setup', dst='p1'),
+                         dict(name='turn', src='p1',    dst='p2'),
+                         dict(name='turn', src='p2',    dst='p1'),
+                         dict(name='stop', src='*',     dst='over'))))
 
     def onbeforeplay(self, e):
         if not all(plyr.isstate('ready') for plyr in self.players.values()):
@@ -39,11 +39,16 @@ class Game(fysom.Fysom):
 
     def onover(self, e):
         logger.info('game over')
+        # stop all decks, uncrush all hits
+        for plyr in self.players.values():
+            for tile in plyr.board.tiles:
+                tile.midi_reset()
 
     def _reset_boards(self):
         logger.debug('resetting the boards and ui')
+        midi_pitch_set = set(conf.MIDI_PITCH_RANGE)
         for plyr in self.players.values():
-            plyr.board = board.Board()
+            plyr.board = board.Board(midi_pitch_set=midi_pitch_set)
             plyr.publish_board()
             plyr.client.turn_led(on=False)
 
@@ -69,8 +74,12 @@ class GameManager:
                 message = self.mq.get(timeout=conf.GAME_TIMEOUT)
                 self._handle_message(message)
             except queue.Empty:
+                logging.info('game timed out after {} sec, new game'.format(
+                    conf.GAME_TIMEOUT))
+                self.game.stop()
                 self.game = Game(self.players)
             except KeyboardInterrupt:
+                self.game.stop()
                 self.game = Game(self.players)
                 print('Thanks for playing')
                 break
@@ -109,8 +118,6 @@ class GameManager:
                     tile.fire()
                     if tile.isstate('miss'):
                         self.game.turn()
-                    elif tile.isstate('hit'):
-                        board._hits.add(i)
             # check if game is over
             if board.all_ships_destroyed():
                 self.game.stop()

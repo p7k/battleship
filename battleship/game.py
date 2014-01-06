@@ -124,6 +124,8 @@ class GameManager:
                     tile.fire()
                     if tile.isstate('miss'):
                         self.game.turn()
+                    # important to make sure that we don't allow multifire
+                    break
             # check if game is over
             if board.all_ships_destroyed():
                 self.game.stop()

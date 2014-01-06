@@ -1,6 +1,7 @@
 import logging
-import multiprocessing
 import itertools
+import multiprocessing
+import queue
 import fysom
 from battleship import board, conf, player
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Game(fysom.Fysom):
     def __init__(self, players):
+        logger.info('starting new game')
         self.players = players
         self._reset_boards()
         super().__init__(
@@ -17,6 +19,10 @@ class Game(fysom.Fysom):
                          dict(name='turn', src='p1',         dst='p2'),
                          dict(name='turn', src='p2',         dst='p1'),
                          dict(name='stop', src=('p1', 'p2'), dst='over'))))
+
+    def onbeforeplay(self, e):
+        if not all(plyr.isstate('ready') for plyr in self.players.values()):
+            return False
 
     def _reset_boards(self):
         logger.debug('resetting the boards and ui')
@@ -46,6 +52,8 @@ class GameManager:
             try:
                 message = self.mq.get(timeout=conf.GAME_TIMEOUT)
                 self._handle_message(message)
+            except queue.Empty:
+                self.game = Game(self.players)
             except KeyboardInterrupt:
                 break
 
@@ -59,25 +67,37 @@ class GameManager:
 
     def _handle_message_us(self, player, params):
         """Handles messages from player's own board. (just during setup)"""
-        if self.game.isstate('setup') and (player.isstate('setup') or
-                                           player.isstate('confirmation')):
+        print(self.game.current, player.current)
+        if self.game.isstate('setup') and \
+                player.current in set(['setup', 'confirmation']):
             player.board.place_tiles(params)
-            player.send_board()
-        if player.board.isstate('partial') and player.can('deny'):
+        player.send_board()
+        # confirmation
+        if player.board.isstate('partial'):
             player.deny()
         if player.board.isstate('complete') and player.can('prompt'):
             player.prompt()
 
     def _handle_message_them(self, player, params):
         """Handles messages from player's monitor board. (game play)"""
-        if any(params) and self.game.can('play'):
-            self.game.play()
         player.opponent.board.attack_tiles(params)
         player.opponent.publish_board()
 
     def _handle_message_ready(self, player, params):
         """Handles messages from the confirmation button."""
-        if player.can('confirm') and all(params):
+        if player.isstate('confirmation') and all(params):
             player.confirm()
-        elif player.can('deny'):
+        else:
             player.deny()
+        # confirmation
+        if player.board.isstate('partial'):
+            player.deny()
+        if player.board.isstate('complete') and player.can('prompt'):
+            player.prompt()
+        # attempt to start the game
+        self.game.play()
+
+
+def run():
+    game_manager = GameManager()
+    game_manager.start()

@@ -15,10 +15,13 @@ class Player(fysom.Fysom):
         time.sleep(.2)
         self.client = Client(*client_address)
         super().__init__(
-            dict(initial='setup', final='ready',
+            dict(initial='setup',
                  events=(dict(name='prompt', src='setup', dst='confirmation'),
                          dict(name='confirm', src='confirmation', dst='ready'),
-                         dict(name='deny', src='confirmation', dst='setup'))))
+                         dict(name='deny', src='*', dst='setup'))))
+
+    def onready(self, e):
+        logger.info('player ready')
 
     def onsetup(self, e):
         logger.debug('turning off prompt button')

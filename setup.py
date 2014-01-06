@@ -13,4 +13,7 @@ setup(name='battleship',
           'rtmidi2',
       ],
       test_suite='battleship.test',
-      zip_safe=False,)
+      zip_safe=False,
+      entry_points={'console_scripts': [
+          'battleship = battleship.game:run'
+      ]})

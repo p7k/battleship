@@ -6,7 +6,7 @@ import logging
 
 # logging
 logging.basicConfig(
-    format='%(asctime)-24s%(levelname)-10s%(name)-25s%(message)s',
+    format='%(levelname)-6s%(process)-6d%(name)-18s%(funcName)-18s%(message)s',
     level=logging.DEBUG)
 
 # board will be n x n

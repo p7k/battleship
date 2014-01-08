@@ -1,5 +1,7 @@
 import logging
-from multiprocessing import Process
+import multiprocessing
+import socket
+import sys
 from pythonosc import dispatcher, osc_server, udp_client, osc_message_builder
 from battleship import conf
 
@@ -19,7 +21,11 @@ class Client(udp_client.UDPClient):
         """adds logging"""
         logger.debug('OSC TX <%s> on <%s> %s',
                      (self._address, self._port), msg.address, msg.params)
-        return super().send(msg)
+        try:
+            return super().send(msg)
+        except socket.gaierror as e:
+            logger.error(e)
+            sys.exit(1)
 
     def confirmation_button(self, on=True):
         mb = self.message_builder('ready_light')
@@ -45,7 +51,7 @@ class Client(udp_client.UDPClient):
         return msg
 
 
-class Server(Process):
+class Server(multiprocessing.Process):
     name = 'battleship_osc_server'
     daemon = True
 

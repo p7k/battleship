@@ -1,6 +1,6 @@
 import unittest
+import multiprocessing
 import time
-from multiprocessing import Queue
 from battleship import board, osc
 
 
@@ -9,7 +9,7 @@ class TestServerClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.mq = Queue()
+        cls.mq = multiprocessing.Queue()
         topic_mapping = dict(us=('/test/address/', '/test/address/'))
         cls.server = osc.Server(cls.server_address, cls.mq, topic_mapping)
         cls.server.start()

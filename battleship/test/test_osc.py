@@ -1,7 +1,7 @@
 import unittest
 import time
 from multiprocessing import Queue
-from battleship import player, board
+from battleship import board, osc
 
 
 class TestServerClient(unittest.TestCase):
@@ -11,9 +11,9 @@ class TestServerClient(unittest.TestCase):
     def setUpClass(cls):
         cls.mq = Queue()
         topic_mapping = dict(us=('/test/address/', '/test/address/'))
-        cls.server = player.Server(cls.server_address, cls.mq, topic_mapping)
+        cls.server = osc.Server(cls.server_address, cls.mq, topic_mapping)
         cls.server.start()
-        cls.client = player.Client('localhost', 5005, topic_mapping)
+        cls.client = osc.Client('localhost', 5005, topic_mapping)
         time.sleep(.1)
 
     def test_send_receive_through_queue(self):

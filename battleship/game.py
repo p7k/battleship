@@ -1,12 +1,49 @@
-import logging
 import itertools
+import logging
 import multiprocessing
-import datetime
 import queue
+import time
 import fysom
-from battleship import board, conf, player
+from battleship import board, conf, osc
 
 logger = logging.getLogger(__name__)
+
+
+class Player(fysom.Fysom):
+    def __init__(self, game_queue, server_address, client_address):
+        self.server = osc.Server(server_address, game_queue)
+        self.server.start()
+        time.sleep(.2)
+        self.client = osc.Client(*client_address)
+        super().__init__(
+            dict(initial='setup',
+                 events=(dict(name='prompt', src='setup', dst='confirmation'),
+                         dict(name='confirm', src='confirmation', dst='ready'),
+                         dict(name='deny', src='*', dst='setup'))))
+
+    def onready(self, e):
+        logger.info('player ready')
+
+    def onsetup(self, e):
+        logger.debug('turning off prompt button')
+        self.client.confirmation_button(on=False)
+        self.client.confirmation_value(on=False)
+        self.client.turn_led(on=False)
+
+    def onconfirmation(self, e):
+        logger.debug('turning on prompt button')
+        self.client.confirmation_value(on=False)
+        self.client.confirmation_button(on=True)
+
+    def send_board(self):
+        self.client.send_board(self.board, 'us')
+
+    def send_board_to_opponent(self):
+        self.opponent.client.send_board(self.board, 'them')
+
+    def publish_board(self):
+        self.send_board()
+        self.send_board_to_opponent()
 
 
 class Game(fysom.Fysom):
@@ -62,7 +99,7 @@ class GameManager:
         self.players = {}
         for player_conf in players_conf[:2]:
             server_port = player_conf['server_address'][1]
-            plyr = player.Player(game_queue=self.mq, **player_conf)
+            plyr = Player(game_queue=self.mq, **player_conf)
             self.players[server_port] = plyr
         # link opponents
         for plyr, opponent in itertools.permutations(self.players.values()):
@@ -93,8 +130,7 @@ class GameManager:
         # determine and call topic handler
         topic_handler = getattr(self, '_handle_message_{}'.format(topic))
         if self.game.isstate('over'):
-            td = datetime.datetime.now() - self.last_game_ended
-            if td.total_seconds() > conf.IGNORE_AFTER_GAME_OVER:
+            if time.time() - self.last_game_ended > conf.IGNORE_TIME_GAME_OVER:
                 self.game = Game(self.players)
             else:
                 logging.info('game is over, ignoring ui messages')
@@ -129,7 +165,7 @@ class GameManager:
             # check if game is over
             if board.all_ships_destroyed():
                 self.game.stop()
-                self.last_game_ended = datetime.datetime.now()
+                self.last_game_ended = time.time()
         player.opponent.publish_board()
 
     def _handle_message_ready(self, player, params):

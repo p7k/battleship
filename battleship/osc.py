@@ -1,48 +1,9 @@
 import logging
-import time
-import fysom
 from multiprocessing import Process
 from pythonosc import dispatcher, osc_server, udp_client, osc_message_builder
 from battleship import conf
 
 logger = logging.getLogger(__name__)
-
-
-class Player(fysom.Fysom):
-    def __init__(self, game_queue, server_address, client_address):
-        self.server = Server(server_address, game_queue)
-        self.server.start()
-        time.sleep(.2)
-        self.client = Client(*client_address)
-        super().__init__(
-            dict(initial='setup',
-                 events=(dict(name='prompt', src='setup', dst='confirmation'),
-                         dict(name='confirm', src='confirmation', dst='ready'),
-                         dict(name='deny', src='*', dst='setup'))))
-
-    def onready(self, e):
-        logger.info('player ready')
-
-    def onsetup(self, e):
-        logger.debug('turning off prompt button')
-        self.client.confirmation_button(on=False)
-        self.client.confirmation_value(on=False)
-        self.client.turn_led(on=False)
-
-    def onconfirmation(self, e):
-        logger.debug('turning on prompt button')
-        self.client.confirmation_value(on=False)
-        self.client.confirmation_button(on=True)
-
-    def send_board(self):
-        self.client.send_board(self.board, 'us')
-
-    def send_board_to_opponent(self):
-        self.opponent.client.send_board(self.board, 'them')
-
-    def publish_board(self):
-        self.send_board()
-        self.send_board_to_opponent()
 
 
 class Client(udp_client.UDPClient):
@@ -56,7 +17,7 @@ class Client(udp_client.UDPClient):
 
     def send(self, msg):
         """adds logging"""
-        logger.debug('OSC send <%s> on <%s> %s',
+        logger.debug('OSC TX <%s> on <%s> %s',
                      (self._address, self._port), msg.address, msg.params)
         return super().send(msg)
 
@@ -103,7 +64,7 @@ class Server(Process):
         if msg != self._last_message:
             self._last_message = msg
             osc_addr, topic = args
-            logger.debug('OSC recv <%s> on <%s> %s',
+            logger.debug('OSC RX <%s> on <%s> %s',
                          self.server_address, osc_addr, msg)
             self._queue.put((self.server_address, topic, msg))
 

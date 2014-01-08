@@ -45,4 +45,4 @@ PLAYERS = [{'client_address': ('alice.local', 8000),
 GAME_TIMEOUT = 60*10
 
 # time ignore message
-IGNORE_AFTER_GAME_OVER = 10
+IGNORE_TIME_GAME_OVER = 10

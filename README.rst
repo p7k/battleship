@@ -1,7 +1,6 @@
-battleship podcast
-==================
+battleship
+==========
 
-notes
------
-- in Lemur, use for grid use Switches
-- map channels to states (empty, dock, hit, miss) + ship?
+a game / a sound installation
+
+server runs on python and triggers loops in ableton, interacts with two instances on LemurUI on supported devices.
